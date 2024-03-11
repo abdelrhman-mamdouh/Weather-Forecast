@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".MainActivity">
+
+   <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+       <androidx.cardview.widget.CardView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_margin="8dp"
+       app:cardCornerRadius="40dp"
+       app:cardElevation="4dp">
+
+       <androidx.appcompat.widget.Toolbar
+           android:id="@+id/my_toolbar2"
+           android:layout_width="match_parent"
+           android:layout_height="?attr/actionBarSize"
+           android:background="@drawable/background"
+           app:navigationIcon="@drawable/menu_icon"
+           app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+           app:title="@string/app_name"
+           app:titleTextColor="@color/white"
+           app:titleTextAppearance="@style/ToolbarTitleTextAppearance" />
+           />
+
+   </androidx.cardview.widget.CardView>
+
+       <TextView
+           android:id="@+id/location_name"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Home, Trøndelag"
+           android:textSize="24sp"
+           android:textStyle="bold" />
+
+       <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fri, 26 Feb"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/weather_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Light rain"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4°C / 0°C"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/time_and_condition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 AM - Snow\n3 AM - 4°C\n4 AM - פין\n5 AM - ас\n6 AM - ос"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

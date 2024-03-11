@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ButtonTextStyle">
+        <item name="android:textSize">16sp</item> <!-- Text size -->
+        <item name="android:textColor">@color/white</item> <!-- Text color -->
+        <item name="android:fontFamily">@font/muli_black</item> <!-- Font family -->
+    </style>
+    <style name="ButtonTextStyleTwo">
+        <item name="android:textSize">16sp</item> <!-- Text size -->
+        <item name="android:textColor">@color/AppThem</item> <!-- Text color -->
+        <item name="android:fontFamily">@font/muli_black</item> <!-- Font family -->
+    </style>
+    <style name="EditViewStyle">
+        <item name="android:textSize">16sp</item> <!-- Text size -->
+        <item name="android:textColorHint">@color/white</item> <!-- Text color -->
+        <item name="android:fontFamily">@font/muli_black</item>
+        <item name="android:textColor">@color/white</item> <!-- Font family -->
+    </style>
+    <style name="TextViewStyle">
+        <item name="android:textSize">26sp</item> <!-- Text size -->
+        <item name="android:textColor">@color/white</item> <!-- Text color -->
+        <item name="android:fontFamily">@font/muli_black</item> <!-- Font family -->
+    </style>
+    <style name="TextViewStyle2">
+        <item name="android:textSize">16sp</item> <!-- Text size -->
+        <item name="android:textColor">@color/white</item> <!-- Text color -->
+        <item name="android:fontFamily">@font/roboto_bold</item> <!-- Font family -->
+    </style>
+    <style name="CustomSnackbarText" parent="android:Widget.TextView">
+        <item name="android:textSize">16sp</item> <!-- Change the text size as per your requirement -->
+        <item name="android:fontFamily">@font/muli_black</item> <!-- Replace "your_custom_font" with the font you want to use -->
+    </style>
+
+    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:fontFamily">@font/muli_black</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="ToolbarAppearance">
+       <item name="cornerRadius">40dp</item>
+    </style>
+
+</resources>
