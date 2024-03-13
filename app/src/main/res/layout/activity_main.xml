@@ -1,78 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
     tools:context=".MainActivity">
 
-   <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.github.matteobattilana.weather.WeatherView
+            android:id="@+id/wv_weather_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:paddingHorizontal="@dimen/_30sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_16sdp"
+
+            app:cardCornerRadius="@dimen/_40sdp"
+            app:cardElevation="@dimen/_16sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/my_toolbar"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background"
+                app:navigationIcon="@drawable/menu_icon"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="@string/menu_home"
+                app:titleTextAppearance="@style/ToolbarTitleTextAppearance"
+                app:titleTextColor="@color/white" />
+            />
+
+        </androidx.cardview.widget.CardView>
+
+        <fragment
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:defaultNavHost="true"
+            android:layout_marginTop="@dimen/_10ssp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView"
+            app:layout_constraintVertical_bias="1.0"
+            app:navGraph="@navigation/nav_graph" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigator_layout"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
-       <androidx.cardview.widget.CardView
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
-           android:layout_margin="8dp"
-       app:cardCornerRadius="40dp"
-       app:cardElevation="4dp">
+        android:layout_gravity="start"
+        app:headerLayout="@layout/nav_header_profile"
 
-       <androidx.appcompat.widget.Toolbar
-           android:id="@+id/my_toolbar2"
-           android:layout_width="match_parent"
-           android:layout_height="?attr/actionBarSize"
-           android:background="@drawable/background"
-           app:navigationIcon="@drawable/menu_icon"
-           app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-           app:title="@string/app_name"
-           app:titleTextColor="@color/white"
-           app:titleTextAppearance="@style/ToolbarTitleTextAppearance" />
-           />
-
-   </androidx.cardview.widget.CardView>
-
-       <TextView
-           android:id="@+id/location_name"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="Home, Trøndelag"
-           android:textSize="24sp"
-           android:textStyle="bold" />
-
-       <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Fri, 26 Feb"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp"/>
-
-        <TextView
-            android:id="@+id/weather_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Light rain"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp"/>
-
-        <TextView
-            android:id="@+id/temperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="4°C / 0°C"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp"/>
-
-        <TextView
-            android:id="@+id/time_and_condition"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2 AM - Snow\n3 AM - 4°C\n4 AM - פין\n5 AM - ас\n6 AM - ос"
-            android:textSize="14sp"
-            android:layout_marginTop="8dp"/>
-
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:menu="@menu/activity_main_drawer" />
+</androidx.drawerlayout.widget.DrawerLayout>

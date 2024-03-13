@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">WeatherGuide</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_favorites">Favorites</string>
+    <string name="menu_alerts">Alerts</string>
+    <string name="menu_settings">Settings</string>
+    <string name="weather_guide">Weather Guide</string>
+    <attr name="colorNavigationItem" format="color" />
+    <attr name="colorNavigationItemSelected" format="color" />
+
+    <attr name="drawableNavigationItemBackground" format="reference" />
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
+
+    <string name="temperature">Temperature</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="pressure">Pressure</string>
+    <string name="cloud">Cloud</string>
+    <string name="city">City</string>
+    <string name="visibility">Visibility</string>
+    <string name="weather_description">Weather Description</string>
+    <string name="hourly_weather">Hourly Weather</string>
+    <string name="daily_weather">Daily Weather</string>
+    <string name="current_location">Current Location</string>
+    <string name="currentDate">Date</string>
+    <string name="sea_level">Sea Level</string>
 </resources>
