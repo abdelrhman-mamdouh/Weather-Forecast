@@ -30,4 +30,18 @@
     <string name="current_location">Current Location</string>
     <string name="currentDate">Date</string>
     <string name="sea_level">Sea Level</string>
+    <string name="hourly_forecast">HOURLY FORECAST</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
+    <string name="location">Location</string>
+    <string name="map">Map</string>
+    <string name="gps">GPS</string>
+    <string name="celsius">Celsius</string>
+    <string name="kelvin">Kelvin</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="meter_sec">Meter / Sec</string>
+    <string name="mile_hour">Mile / Hour</string>
+    <string name="notifications">Notifications</string>
+    <string name="enable">Enable</string>
+    <string name="disable">Disable</string>
 </resources>

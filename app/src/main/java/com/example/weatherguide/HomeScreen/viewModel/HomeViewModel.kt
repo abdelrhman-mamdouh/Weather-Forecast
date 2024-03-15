@@ -15,10 +15,10 @@ class HomeViewModel(private val iRepository: WeatherRepository) : ViewModel() {
 
     val weatherData: LiveData<WeatherResponse> = _weatherData
 
-    fun getWeatherData() {
+    fun getWeatherData(latitude:Double,longitude:Double) {
         viewModelScope.launch {
             try {
-                _weatherData.postValue(iRepository.getAllWeatherData())
+                _weatherData.postValue(iRepository.getAllWeatherData(latitude,longitude))
             } catch (e: Exception) {
                 e.printStackTrace()
             }

@@ -23,7 +23,8 @@ class WeatherRepositoryImpl private constructor(
     }
 
 
-    override suspend fun getAllWeatherData(): WeatherResponse {
-        return weatherRemoteDataSource.getWeatherData()
+
+    override suspend fun getAllWeatherData(latitude: Double, longitude: Double): WeatherResponse {
+        return weatherRemoteDataSource.getWeatherData(latitude,longitude)
     }
 }

@@ -28,12 +28,17 @@
         <item name="android:fontFamily">@font/muli_black</item> <!-- Font family -->
     </style>
 
+    <style name="TextViewStyle3">
+        <item name="android:textSize">@dimen/_12ssp</item> <!-- Text size -->
+        <item name="android:textColor">@color/black</item> <!-- Text color -->
+        <item name="android:fontFamily">@font/muli_black</item> <!-- Font family -->
+    </style>
+
     <style name="TextViewStyle2">
         <item name="android:textSize">@dimen/_14ssp</item> <!-- Text size -->
         <item name="android:textColor">@color/black</item> <!-- Text color -->
         <item name="android:fontFamily">@font/muli_extralight</item> <!-- Font family -->
     </style>
-
     <style name="CustomSnackbarText" parent="android:Widget.TextView">
         <item name="android:textSize">16sp
         </item> <!-- Change the text size as per your requirement -->

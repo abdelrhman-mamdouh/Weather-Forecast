@@ -8,8 +8,6 @@ import java.io.IOException
 
 class WeatherRemoteSourceDataImpl private constructor() : WeatherRemoteDataSource {
 
-    private val latitude = 54.525963
-    private val longitude = 15.255119
     private val service: WeatherApiService by lazy {
         RetrofitHelper.service
     }
@@ -26,7 +24,7 @@ class WeatherRemoteSourceDataImpl private constructor() : WeatherRemoteDataSourc
         }
     }
 
-    override suspend fun getWeatherData(): WeatherResponse {
+    override suspend fun getWeatherData(latitude:Double,longitude:Double): WeatherResponse {
         try {
             val response = service.getWeatherForecast(latitude, longitude, Constants.API_KEY)
             if (response.isSuccessful) {
@@ -53,4 +51,6 @@ class WeatherRemoteSourceDataImpl private constructor() : WeatherRemoteDataSourc
             throw e
         }
     }
+
+
 }

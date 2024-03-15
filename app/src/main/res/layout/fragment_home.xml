@@ -13,7 +13,6 @@
         <TextView
             android:id="@+id/locationTextView"
             style="@style/TextViewStyle"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="128dp"
@@ -82,25 +81,53 @@
                 android:src="@drawable/sunny" />
         </RelativeLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/hoursRecyclerView"
-            android:layout_width="0dp"
+
+        <LinearLayout
+            android:id="@+id/background"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_16sdp"
+            android:layout_margin="@dimen/_16sdp"
+            android:background="@drawable/background_two"
+            app:cardCornerRadius="@dimen/_16sdp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/relative" />
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/relative">
+
+            <TextView
+                android:id="@+id/textView"
+                style="@style/TextViewStyle"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_margin="@dimen/_16sdp"
+                android:text="@string/hourly_forecast"
+                android:textSize="@dimen/_14ssp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/hoursRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/_8sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView"></androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+
 
         <View
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="@dimen/_2sdp"
+            android:layout_margin="@dimen/_16sdp"
             android:background="?android:attr/listDivider"
-            android:padding="@dimen/_16sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/hoursRecyclerView" />
+            app:layout_constraintTop_toBottomOf="@+id/background" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/daysRecyclerView"
@@ -112,22 +139,30 @@
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
         <androidx.gridlayout.widget.GridLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/background"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="@drawable/background_two"
+            android:padding="@dimen/_8sdp"
+            android:layout_margin="@dimen/_16sdp"
             app:columnCount="3"
-            android:paddingHorizontal="@dimen/_20sdp"
             app:layout_constraintEnd_toEndOf="@+id/daysRecyclerView"
             app:layout_constraintStart_toStartOf="@+id/daysRecyclerView"
             app:layout_constraintTop_toBottomOf="@+id/daysRecyclerView"
             app:rowCount="2">
+
             <LinearLayout
+                app:layout_gravity="fill"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                app:layout_column="0"
+                app:layout_row="0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_16sdp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_margin="@dimen/_4sdp"
+                android:background="@drawable/background_three"
+                android:padding="@dimen/_10sdp">
 
                 <ImageView
                     android:id="@+id/pressureImageView"
@@ -160,10 +195,17 @@
 
 
             <LinearLayout
+                app:layout_gravity="fill"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                app:layout_column="1"
+                app:layout_row="0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_16sdp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_margin="@dimen/_4sdp"
+                android:background="@drawable/background_three"
+                android:padding="@dimen/_10sdp">
 
                 <ImageView
                     android:id="@+id/humidityImageView"
@@ -199,13 +241,21 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_16sdp"
-                android:orientation="vertical">
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"
+                app:layout_column="2"
+                app:layout_row="0"
+                android:orientation="vertical"
+                android:layout_margin="@dimen/_4sdp"
+                app:layout_gravity="fill"
+                android:background="@drawable/background_three"
+                android:padding="@dimen/_10sdp">
 
                 <ImageView
                     android:id="@+id/windImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/background_three"
                     android:layout_gravity="center_horizontal"
                     android:src="@drawable/wind" />
 
@@ -233,10 +283,13 @@
 
 
             <LinearLayout
+                app:layout_gravity="fill"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_16sdp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_margin="@dimen/_4sdp"
+                android:background="@drawable/background_three"
+                android:padding="@dimen/_10sdp">
 
                 <ImageView
                     android:id="@+id/cloudImageView"
@@ -262,15 +315,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="@string/cloud"
+                    app:layout_gravity="fill"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="bold" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/_16sdp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_margin="@dimen/_4sdp"
+                app:layout_gravity="fill"
+                android:background="@drawable/background_three"
+                android:padding="@dimen/_10sdp">
 
                 <ImageView
                     android:id="@+id/seaLevelImageView"
@@ -300,11 +358,15 @@
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="bold" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/_16sdp"
-                android:orientation="vertical">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_margin="@dimen/_5sdp"
+                app:layout_gravity="fill"
+                android:background="@drawable/background_three"
+                android:padding="@dimen/_10sdp">
 
                 <ImageView
                     android:id="@+id/visibilityImageView"

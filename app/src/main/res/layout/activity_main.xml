@@ -11,10 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.github.matteobattilana.weather.WeatherView
-            android:id="@+id/wv_weather_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
             android:paddingHorizontal="@dimen/_30sdp"
