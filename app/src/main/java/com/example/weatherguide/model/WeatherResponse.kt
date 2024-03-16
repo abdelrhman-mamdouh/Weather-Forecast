@@ -91,7 +91,40 @@ fun createWeatherAllDaysList(weatherDataList: WeatherResponse): List<WeatherDays
 
     return weatherItemList
 }
+ fun getCurrentDayWeatherData(weatherDataList: List<WeatherItem>): WeatherItem? {
+    // Get current hour range
+    val currentHourRange = getCurrentHourRange()
 
+    // Get current date
+    val currentDate = Calendar.getInstance().time
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val currentDateString = dateFormat.format(currentDate).substring(0, 10)
+
+    // Filter weather data for current date and hour range
+    val filteredData = weatherDataList.filter { weatherData ->
+        val dateString = weatherData.dt_txt.substring(0, 10)
+        dateString == currentDateString
+    }.filter { weatherData ->
+        val date = dateFormat.parse(weatherData.dt_txt)
+        if (date != null) {
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            hour in currentHourRange
+        } else {
+            false
+        }
+    }
+
+    // Return the first matching item or null if no match is found
+    return filteredData.firstOrNull()
+}
+private fun getCurrentHourRange(): IntRange {
+    val calendar = Calendar.getInstance()
+    val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+    val startHour = (currentHour / 3) * 3
+    return startHour..(startHour + 3)
+}
 fun getShortDayNameFromDate(dateString: String): String {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val date = dateFormat.parse(dateString)

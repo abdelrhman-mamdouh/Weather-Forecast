@@ -54,6 +54,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonMap"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/map"
@@ -62,6 +63,8 @@
                 <RadioButton
                     android:id="@+id/radioButtonGPS"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
+                    android:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gps"
@@ -97,6 +100,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonArabic"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/arabic"
@@ -106,6 +110,7 @@
                     android:id="@+id/radioButtonEnglish"
                     style="@style/TextViewStyle2"
                     android:layout_width="wrap_content"
+                    app:buttonTint="@color/primary_color"
                     android:layout_height="wrap_content"
                     android:text="@string/english"
                     android:textColor="@color/white" />
@@ -146,6 +151,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonCelsius"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/celsius"
@@ -154,6 +160,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonKelvin"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/kelvin"
@@ -162,6 +169,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonFahrenheit"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/fahrenheit"
@@ -200,6 +208,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonSpeedUnitMS"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/meter_sec"
@@ -208,6 +217,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonSpeedUnitMH"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/mile_hour"
@@ -243,6 +253,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonEnable"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/enable"
@@ -251,6 +262,7 @@
                 <RadioButton
                     android:id="@+id/radioButtonDisable"
                     style="@style/TextViewStyle2"
+                    app:buttonTint="@color/primary_color"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/disable"

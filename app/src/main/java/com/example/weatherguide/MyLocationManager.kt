@@ -46,42 +46,19 @@ class MyLocationManager(private val context: Context) {
         context.startActivity(intent)
     }
     @SuppressLint("MissingPermission")
-    fun  startLocationUpdates(listener: LocationListener) {
+    fun startLocationUpdates(listener: LocationListener) {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationProviderClient.requestLocationUpdates(
-            LocationRequest.Builder(0).apply {
-                setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            }.build(), object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    val location = locationResult.lastLocation
-                    Log.i("TAG", "fragment: ${location?.longitude}")
-                    if (location != null) {
-                      listener.onLocationChanged(location.latitude,location.longitude)
-                    }
+        fusedLocationProviderClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    Log.i("TAG", "fragment: ${location.longitude}")
+                    listener.onLocationChanged(location.latitude, location.longitude)
                 }
-            }, Looper.myLooper()
-
-        )
-    }
-     fun getAddressFromLocation(latitude: Double, longitude: Double) {
-        val geocoder = Geocoder(context).getFromLocation(longitude!!,latitude!!,1)
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                if (geocoder != null) {
-                    if (geocoder.isNotEmpty()) {
-                        val address = geocoder[0]
-                        val addressText =
-                            "${address?.getAddressLine(0)}, ${address?.locality}, ${address?.countryName}"
-                        withContext(Dispatchers.Main) {
-
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
-        }
+            .addOnFailureListener { exception ->
+                // Handle failure to get location
+                Log.e("TAG", "Error getting location: $exception")
+            }
     }
     fun stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)

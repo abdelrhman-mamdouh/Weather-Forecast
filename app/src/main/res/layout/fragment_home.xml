@@ -8,43 +8,40 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/locationTextView"
-            style="@style/TextViewStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="128dp"
-            android:layout_marginTop="28dp"
-            android:text="@string/current_location"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/dateTextView"
-            style="@style/TextViewStyle2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/currentDate"
-            app:layout_constraintEnd_toEndOf="@+id/locationTextView"
-            app:layout_constraintStart_toStartOf="@+id/locationTextView"
-            app:layout_constraintTop_toBottomOf="@+id/locationTextView" />
+        android:layout_height="wrap_content"
+       >
 
         <RelativeLayout
             android:id="@+id/relative"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_250sdp"
-            android:paddingHorizontal="@dimen/_16sdp"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_16sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateTextView">
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/locationTextView"
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/current_location"
+                android:layout_centerHorizontal="true"
+                />
+
+            <TextView
+                android:id="@+id/dateTextView"
+                style="@style/TextViewStyle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/locationTextView"
+                android:layout_centerHorizontal="true"
+                android:text="@string/currentDate" />
 
             <FrameLayout
                 android:id="@+id/rectangle"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_180sdp"
+                android:layout_height="@dimen/_170sdp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/background"
                 android:paddingHorizontal="@dimen/_40sdp">
@@ -69,15 +66,17 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/_60ssp"
                     android:textStyle="bold" />
-
             </FrameLayout>
 
             <ImageView
                 android:id="@+id/weatherIconImageView"
                 android:layout_width="@dimen/_200sdp"
-                android:layout_height="@dimen/_200sdp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/_170sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="@dimen/_90sdp"
+                android:layout_marginTop="@dimen/_90sdp"
+                android:layout_marginEnd="@dimen/_90sdp"
+                android:layout_marginBottom="@dimen/_90sdp"
                 android:src="@drawable/sunny" />
         </RelativeLayout>
 
@@ -86,7 +85,7 @@
             android:id="@+id/background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_16sdp"
+            android:layout_marginHorizontal="@dimen/_16sdp"
             android:background="@drawable/background_two"
             app:cardCornerRadius="@dimen/_16sdp"
             app:layout_constraintEnd_toEndOf="parent"

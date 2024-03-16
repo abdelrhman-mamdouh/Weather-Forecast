@@ -1,4 +1,4 @@
-package com.example.weatherguide.HomeScreen.viewModel
+package com.example.weatherguide.homeScreen.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
