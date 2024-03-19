@@ -1,4 +1,4 @@
-package com.example.weatherguide
+package com.example.weatherguide.homeScreen.view
 
 import android.location.Location
 

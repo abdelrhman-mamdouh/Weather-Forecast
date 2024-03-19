@@ -19,7 +19,7 @@
         </item>
         <item
             android:id="@+id/alertsFragment"
-            android:icon="@drawable/ic_alert"
+            android:icon="@drawable/ic_alert_s"
             android:title="@string/menu_alerts" />
         <item
             android:id="@+id/settingsFragment"

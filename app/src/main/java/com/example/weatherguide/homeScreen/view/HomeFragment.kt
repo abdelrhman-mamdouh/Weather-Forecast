@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -21,18 +22,19 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherguide.Constants
-import com.example.weatherguide.LocationListener
 import com.example.weatherguide.MyLocationManager
 import com.example.weatherguide.R
 import com.example.weatherguide.db.WeatherLocalDataSourceImpl
+
+import com.example.weatherguide.homeScreen.ApiState
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
 import com.example.weatherguide.model.WeatherRepositoryImpl
 import com.example.weatherguide.model.createWeatherAllDaysList
 import com.example.weatherguide.model.createWeatherHoursList
-import com.example.weatherguide.model.getCurrentDayWeatherData
 import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
@@ -40,7 +42,7 @@ import java.util.Calendar
 import java.util.Locale
 
 class HomeFragment : Fragment(), LocationListener {
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var homeViewModel: HomeViewModel
     private lateinit var homeViewModelFactory: HomeViewModelFactory
     private lateinit var weatherIconImageView: ImageView
     private lateinit var hoursRecyclerView: RecyclerView
@@ -59,6 +61,8 @@ class HomeFragment : Fragment(), LocationListener {
     private lateinit var locationTextView: TextView
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var locationManager: MyLocationManager
+    private val sharedFlow = MutableSharedFlow<Pair<Double, Double>>()
+    private lateinit var loader: ProgressBar
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,14 +75,10 @@ class HomeFragment : Fragment(), LocationListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialization(view)
-        locationManager = MyLocationManager(context = requireContext())
 
-        homeViewModelFactory = HomeViewModelFactory(
-            WeatherRepositoryImpl.getInstance(
-                WeatherRemoteSourceDataImpl.getInstance(),
-                WeatherLocalDataSourceImpl(requireContext())
-            )
-        )
+        locationManager = MyLocationManager(context = requireContext())
+        loader = view.findViewById(R.id.loader)
+
         hoursRecyclerView = view.findViewById(R.id.hoursRecyclerView)
         hoursRecyclerView.setHasFixedSize(true)
         hoursLinearManger = LinearLayoutManager(requireContext())
@@ -89,12 +89,19 @@ class HomeFragment : Fragment(), LocationListener {
         daysLinearManager = LinearLayoutManager(requireContext())
         daysLinearManager.orientation = RecyclerView.VERTICAL
         daysRecyclerView.layoutManager = daysLinearManager
-        viewModel =
+        homeViewModelFactory = HomeViewModelFactory(
+            WeatherRepositoryImpl.getInstance(
+                WeatherRemoteSourceDataImpl.getInstance(),
+                WeatherLocalDataSourceImpl(requireContext())
+            ), sharedFlow
+        )
+        homeViewModel =
             ViewModelProvider(requireActivity(), homeViewModelFactory)[HomeViewModel::class.java]
+
         if (locationManager.checkPermissions()) {
             if (locationManager.isLocationEnabled()) {
-                // locationManager.startLocationUpdates(this)
                 onLocationSourceSelected()
+
             } else {
                 locationManager.enableLocationServices()
             }
@@ -108,35 +115,90 @@ class HomeFragment : Fragment(), LocationListener {
                 Constants.REQUEST_LOCATION_CODE
             )
         }
-    }
 
-    private suspend fun updateUI(latitude: Double, longitude: Double) {
-        viewModel.getWeatherData(latitude, longitude)
-        getAddressLocation(latitude, longitude)
-        viewModel.weatherData.observe(viewLifecycleOwner) { weatherResponse ->
-            val weatherHoursList = createWeatherHoursList(weatherResponse)
-            val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
-            hoursRecyclerView.adapter = hoursAdapter
-            hoursAdapter.notifyDataSetChanged()
-            val weatherDaysList = createWeatherAllDaysList(weatherResponse)
-            val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
-            daysRecyclerView.adapter = daysAdapter
-            daysAdapter.notifyDataSetChanged()
-            val currentWeatherData = getCurrentDayWeatherData(weatherResponse.list)
-            if (currentWeatherData != null) {
-                pressureTextView.text = "${currentWeatherData.main.pressure} hPa"
-                seaLevelTextView.text = "${currentWeatherData.main.sea_level} hPa"
-                humidityTextView.text = "${currentWeatherData.main.humidity}%"
-                windTextView.text = "${currentWeatherData.wind.speed} m/s"
-                cloudTextView.text = "${currentWeatherData.clouds.all} %"
-                visibilityTextView.text = "${currentWeatherData.visibility} m"
-                weatherDescriptionTextView.text = currentWeatherData.weather[0].description
-                temperatureTextView.text =
-                    "${convertKelvinToCelsius(currentWeatherData.main.temp)}°C"
-                dateTextView.text = getCurrentDateFormatted()
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            homeViewModel.weatherData.collect { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        showLoading(true)
+                    }
+
+                    is ApiState.Success -> {
+                        showLoading(false)
+                        locationTextView.text = "${state.data.name}"
+                        pressureTextView.text = "${state.data.main.pressure} hPa"
+                        seaLevelTextView.text = "${state.data.main.seaLevel} hPa"
+                        humidityTextView.text = "${state.data.main.humidity}%"
+                        windTextView.text = "${state.data.wind.speed} m/s"
+                        cloudTextView.text = "${state.data.clouds.all} %"
+                        visibilityTextView.text = "${state.data.visibility} m"
+                        weatherDescriptionTextView.text = state.data.weather[0].description
+                        temperatureTextView.text =
+                            "${convertKelvinToCelsius(state.data.main.temp)}°C"
+                        dateTextView.text = getCurrentDateFormatted()
+                    }
+
+                    else -> {
+                        showLoading(false)
+                    }
+                }
             }
         }
+        lifecycleScope.launch(Dispatchers.Main) {
+            homeViewModel.weatherHourlyData.collect { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        showLoading(true)
+                    }
+
+                    is ApiState.Success -> {
+                        showLoading(false)
+                        Log.i("TAG", "weatherHourlyData: ${state.data.list}")
+                           val weatherHoursList = createWeatherHoursList(state.data.list)
+                            val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
+                            hoursRecyclerView.adapter = hoursAdapter
+                           hoursAdapter.notifyDataSetChanged()
+                    }
+
+                    else -> {
+                        showLoading(false)
+                    }
+                }
+            }
+        }
+        lifecycleScope.launch(Dispatchers.Main) {
+            homeViewModel.weatherDaysData.collect { state ->
+                when (state) {
+                    is ApiState.Loading -> {
+                        showLoading(true)
+                    }
+
+                    is ApiState.Success -> {
+                        showLoading(false)
+                        Log.i("TAG", "weatherDaysData: ${state.data.list}")
+                        val weatherDaysList = createWeatherAllDaysList(state.data.list)
+                             val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
+                              daysRecyclerView.adapter = daysAdapter
+                              daysAdapter.notifyDataSetChanged()
+                    }
+
+                    else -> {
+                        showLoading(false)
+                    }
+                }
+            }
+        }
+
+
+        //       val weatherDaysList = createWeatherAllDaysList(weatherResponse)
+        //       val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
+        //       daysRecyclerView.adapter = daysAdapter
+        //       daysAdapter.notifyDataSetChanged()
+        //       val currentWeatherData = getCurrentDayWeatherData(weatherResponse.list)
+
     }
+
 
     private fun initialization(view: View) {
         weatherIconImageView = view.findViewById<ImageView>(R.id.weatherIconImageView)
@@ -152,23 +214,7 @@ class HomeFragment : Fragment(), LocationListener {
         dateTextView = view.findViewById(R.id.dateTextView)
     }
 
-    private suspend fun getAddressLocation(latitude: Double, longitude: Double) {
-        val geocoder = Geocoder(requireContext()).getFromLocation(latitude!!, longitude!!, 1)
-        try {
-            if (geocoder != null) {
-                if (geocoder.isNotEmpty()) {
-                    val address = geocoder[0]
-                    Log.i("TAG", "getAddressLocation:${latitude}+--${longitude} ")
-                    val addressText = "${address?.locality}, ${address?.countryName}"
-                    withContext(Dispatchers.Main) {
-                        locationTextView.text = addressText
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
+
 
     private fun convertKelvinToCelsius(kelvin: Double): Int {
         return (kelvin - 273.15).toInt()
@@ -192,28 +238,42 @@ class HomeFragment : Fragment(), LocationListener {
     }
 
     override fun onLocationChanged(latitude: Double, longitude: Double) {
-        lifecycleScope.launch {
-            updateUI(latitude, longitude)
+        lifecycleScope.launch(Dispatchers.Main) {
+            val pair = Pair(latitude, longitude)
+            sharedFlow.emit(pair)
         }
     }
 
-     fun onLocationSourceSelected() {
+    private fun onLocationSourceSelected() {
         sharedPreferences =
             requireContext().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
         val selectedOption = sharedPreferences.getString("selected_option", null)
         when (selectedOption) {
             "Map" -> {
-                val sharedPreferences = requireContext().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
-                val latitude = sharedPreferences.getFloat("latitude", 0.0f).toDouble()
-                val longitude = sharedPreferences.getFloat("longitude", 0.0f).toDouble()
-                Log.i("TAG", "onLocationSourceSelected: ${latitude}+${longitude}")
-                lifecycleScope.launch {
-                    updateUI(latitude, longitude)
+                val sharedPreferences =
+                    requireContext().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
+                val latitude = sharedPreferences.getFloat("latitudeFromMap", 0.0f).toDouble()
+                val longitude = sharedPreferences.getFloat("longitudeFromMap", 0.0f).toDouble()
+                lifecycleScope.launch(Dispatchers.Main) {
+                    sharedFlow.emit(latitude to longitude)
                 }
+
             }
-            else->{
-                locationManager.startLocationUpdates(this)
+            else -> {
+                val latitude = sharedPreferences.getFloat("latitudeFromSearch", 0.0f).toDouble()
+                val longitude = sharedPreferences.getFloat("longitudeFromSearch", 0.0f).toDouble()
+                if (latitude != null) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        sharedFlow.emit(latitude to longitude)
+                    }
+                } else
+                    locationManager.startLocationUpdates(this)
             }
         }
     }
+
+    private fun showLoading(isLoading: Boolean) {
+        loader.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
 }

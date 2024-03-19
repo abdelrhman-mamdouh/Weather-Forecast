@@ -1,0 +1,13 @@
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight"> <!-- Adjust the ripple color as needed -->
+
+    <item android:id="@android:id/mask">
+        <color android:color="@android:color/white"/> <!-- Mask color for the ripple -->
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FC0436"/> <!-- Background color of the button -->
+        </shape>
+    </item>
+</ripple>

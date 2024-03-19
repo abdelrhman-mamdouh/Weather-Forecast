@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
+import com.example.weatherguide.mapScreen.view.MapActivity
 
 
 class SettingsFragment : Fragment() {

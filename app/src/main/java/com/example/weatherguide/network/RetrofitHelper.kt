@@ -1,20 +1,44 @@
 package com.example.weatherguide.network
 
 import com.example.weatherguide.Constants
-import com.example.weatherguide.model.WeatherResponse
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
 object RetrofitHelper {
 
-    val retrofitInstance = Retrofit.Builder()
+    private val retrofitCurrentWeather: Retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(Constants.BASE_URL)
+        .baseUrl(Constants.CURRENT_WEATHER_URL)
         .build()
 
 
-    val service: WeatherApiService = retrofitInstance.create(WeatherApiService::class.java)
+    val currentWeatherService: WeatherApiService = retrofitCurrentWeather.create(WeatherApiService::class.java)
+
+
+    private val retrofitLocationNames = Retrofit.Builder()
+        .baseUrl(Constants.BASE_URL_Locations)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val locationNamesService: WeatherApiService = retrofitLocationNames.create(WeatherApiService::class.java)
+
+
+
+    private val retrofitHourlyForecast  = Retrofit.Builder()
+        .baseUrl(Constants.HOURLY_FORECAST_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val hourlyForecastService: WeatherApiService = retrofitHourlyForecast.create(WeatherApiService::class.java)
+
+
+    private val retrofitDaysForecast  = Retrofit.Builder()
+        .baseUrl(Constants.DAYS_FORECAST_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val daysForecastService: WeatherApiService = retrofitDaysForecast.create(WeatherApiService::class.java)
+
 }
 
