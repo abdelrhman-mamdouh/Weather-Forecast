@@ -101,4 +101,7 @@ dependencies {
 
     // Google Places SDK dependency for accessing and displaying places information
     implementation("com.google.android.libraries.places:places:3.3.0")
+
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
 }
