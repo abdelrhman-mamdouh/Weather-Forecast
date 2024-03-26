@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="alarm"
+            type="com.example.weatherguide.model.AlarmDate" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/alarmView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="@dimen/_8sdp"
+        app:cardCornerRadius="@dimen/_20sdp"
+        app:cardElevation="8dp">
+
+
+        <LinearLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/background"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <ImageView
+                android:id="@+id/weatherIconImageView"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="@dimen/_8sdp"
+                android:src="@drawable/ic_alarm" />
+
+            <TextView
+                android:id="@+id/locationTextView"
+                style="@style/TextViewStyle"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_16sdp"
+                android:layout_weight="4"
+                android:text="@{alarm.dateTime}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold" />
+
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/removeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/ripper_btn"
+                android:padding="@dimen/_8sdp"
+                android:src="@drawable/ic_remove"
+                android:textAlignment="textEnd"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

@@ -28,9 +28,10 @@ import com.example.weatherguide.db.WeatherLocalDataSourceImpl
 import com.example.weatherguide.homeScreen.ApiState
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
+import com.example.weatherguide.model.Alert
 import com.example.weatherguide.model.WeatherRepositoryImpl
+import com.example.weatherguide.model.createCurrentDayWeatherHoursList
 import com.example.weatherguide.model.createWeatherAllDaysList
-import com.example.weatherguide.model.createWeatherHoursList
 import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -62,6 +63,7 @@ class HomeFragment : Fragment(), LocationListener {
     private val sharedFlow = MutableSharedFlow<Pair<Double, Double>>()
     private lateinit var loader: ProgressBar
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private val sharedFlowAlert = MutableSharedFlow<String>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -116,60 +118,11 @@ class HomeFragment : Fragment(), LocationListener {
             )
         }
         getCurrentWeatherData()
-        getHourlyWeatherData()
-        getDaysWeatherData()
         swipeRefreshLayout.setOnRefreshListener {
             reloadFragment()
         }
     }
 
-    private fun getDaysWeatherData() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            homeViewModel.weatherDaysData.collect { state ->
-                when (state) {
-                    is ApiState.Loading -> {
-                        showLoading(true)
-                    }
-
-                    is ApiState.Success -> {
-                        showLoading(false)
-                        val weatherDaysList = createWeatherAllDaysList(state.data.list)
-                        val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
-                        daysRecyclerView.adapter = daysAdapter
-                        daysAdapter.notifyDataSetChanged()
-                    }
-
-                    else -> {
-                        showLoading(false)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getHourlyWeatherData() {
-        lifecycleScope.launch(Dispatchers.Main) {
-            homeViewModel.weatherHourlyData.collect { state ->
-                when (state) {
-                    is ApiState.Loading -> {
-                        showLoading(true)
-                    }
-
-                    is ApiState.Success -> {
-                        showLoading(false)
-                        val weatherHoursList = createWeatherHoursList(state.data.list)
-                        val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
-                        hoursRecyclerView.adapter = hoursAdapter
-                        hoursAdapter.notifyDataSetChanged()
-                    }
-
-                    else -> {
-                        showLoading(false)
-                    }
-                }
-            }
-        }
-    }
 
     private fun getCurrentWeatherData() {
         lifecycleScope.launch(Dispatchers.Main) {
@@ -181,19 +134,29 @@ class HomeFragment : Fragment(), LocationListener {
 
                     is ApiState.Success -> {
                         showLoading(false)
-                        locationTextView.text = "${state.data.name}"
-                        pressureTextView.text = "${state.data.main.pressure} hPa"
-                        seaLevelTextView.text = "${state.data.main.seaLevel} hPa"
-                        humidityTextView.text = "${state.data.main.humidity}%"
-                        windTextView.text = "${state.data.wind.speed} m/s"
-                        cloudTextView.text = "${state.data.clouds.all} %"
-                        visibilityTextView.text = "${state.data.visibility} m"
-                        weatherDescriptionTextView.text = state.data.weather[0].description
+
+                        val weatherHoursList = createCurrentDayWeatherHoursList(state.data.hourly)
+                        val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
+                        hoursRecyclerView.adapter = hoursAdapter
+                        hoursAdapter.notifyDataSetChanged()
+
+                        val weatherDaysList = createWeatherAllDaysList(state.data.daily)
+                        val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
+                        daysRecyclerView.adapter = daysAdapter
+                        daysAdapter.notifyDataSetChanged()
+
+                        locationTextView.text = "${state.data.timezone}"
+                        pressureTextView.text = "${state.data.current.pressure} hPa"
+                        seaLevelTextView.text = "${state.data.current.uvi} hPa"
+                        humidityTextView.text = "${state.data.current.humidity}%"
+                        windTextView.text = "${state.data.current.windSpeed} m/s"
+                        cloudTextView.text = "${state.data.current.clouds} %"
+                        visibilityTextView.text = "${state.data.current.visibility} m"
+                        weatherDescriptionTextView.text = state.data.current.weather[0].description
                         temperatureTextView.text =
-                            "${convertKelvinToCelsius(state.data.main.temp)}°C"
+                            "${convertKelvinToCelsius(state.data.current.temp)}°C"
                         dateTextView.text = getCurrentDateFormatted()
                     }
-
                     else -> {
                         showLoading(false)
                     }
@@ -252,7 +215,7 @@ class HomeFragment : Fragment(), LocationListener {
         when (selectedOption) {
             "Map" -> {
                 val sharedPreferences =
-                    requireActivity().getSharedPreferences("location", Context.MODE_PRIVATE)
+                    requireActivity().getSharedPreferences("current-location", Context.MODE_PRIVATE)
                 val latitude = sharedPreferences.getFloat("latitudeFromMap", 0.0f).toDouble()
                 val longitude = sharedPreferences.getFloat("longitudeFromMap", 0.0f).toDouble()
                 lifecycleScope.launch(Dispatchers.Main) {

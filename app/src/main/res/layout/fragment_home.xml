@@ -15,7 +15,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <RelativeLayout
                 android:id="@+id/relative"
                 android:layout_width="0dp"
@@ -24,7 +23,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
                 <TextView
                     android:id="@+id/locationTextView"
                     style="@style/TextViewStyle"
@@ -32,8 +30,6 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:text="@string/current_location" />
-
-
                 <TextView
                     android:id="@+id/dateTextView"
                     style="@style/TextViewStyle2"
@@ -42,7 +38,6 @@
                     android:layout_below="@+id/locationTextView"
                     android:layout_centerHorizontal="true"
                     android:text="@string/currentDate" />
-
                 <FrameLayout
                     android:id="@+id/rectangle"
                     android:layout_width="match_parent"
@@ -77,6 +72,7 @@
                         android:layout_width="90dp"
                         android:layout_height="90dp"
                         android:layout_gravity="center_horizontal" />
+
                 </FrameLayout>
 
                 <ImageView

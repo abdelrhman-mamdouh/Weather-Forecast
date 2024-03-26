@@ -31,7 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
 
-class FavoritesFragment : Fragment(), OnClickListener {
+class FavoritesFragment : Fragment(), OnClickListener<FavoriteLocation> {
     private lateinit var adapter: FavoriteLocationAdapter
     private lateinit var favoritesViewModel: FavoritesViewModel
     private lateinit var favoritesViewModelFactory: FavoritesViewModelFactory
@@ -112,7 +112,7 @@ class FavoritesFragment : Fragment(), OnClickListener {
         val lat = favoriteLocation.lat
         val long = favoriteLocation.lon
         Log.i("TAG", "onClickLocationFavorite: ${lat}+${long}")
-        val sharedPreferences = requireContext().getSharedPreferences("location", Context.MODE_PRIVATE)
+        val sharedPreferences = requireContext().getSharedPreferences("current-location", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putFloat("latitudeFromMap", lat.toFloat())
         editor.putFloat("longitudeFromMap", long.toFloat())

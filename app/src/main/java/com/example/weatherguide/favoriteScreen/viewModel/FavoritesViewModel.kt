@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 
 class FavoritesViewModel(private val iRepository: WeatherRepository) : ViewModel() {
 
-
     private val _favoriteLocations: MutableStateFlow<ApiState<List<FavoriteLocation>>> =
         MutableStateFlow(ApiState.Loading)
     val favoriteLocations: StateFlow<ApiState<List<FavoriteLocation>>> = _favoriteLocations.asStateFlow()

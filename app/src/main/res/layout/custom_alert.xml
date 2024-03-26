@@ -1,0 +1,62 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/root_layout"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/background"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/cloudy"
+            android:padding="@dimen/_20sdp" />
+
+        <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/muli_black"
+            android:textColor="@color/white"
+            android:padding="@dimen/_8sdp"
+            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:text="@string/weather_guide_alarm"
+            android:textSize="@dimen/_18ssp" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/textMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/muli_extralight"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:paddingTop="@dimen/_16sdp"
+        android:paddingBottom="@dimen/_16sdp"
+        android:textSize="@dimen/_14ssp" />
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSave"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
+            android:padding="@dimen/_10sdp"
+            android:layout_weight="1"
+            android:background="@drawable/background_four"
+            android:fontFamily="@font/muli_black"
+            android:text="@string/dismiss_alarm"
+            android:textColor="@color/white" />
+
+
+
+</LinearLayout>

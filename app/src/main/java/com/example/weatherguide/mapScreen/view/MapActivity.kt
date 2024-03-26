@@ -87,7 +87,6 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
                         showLoading(true)
                         binding.recyclerView.visibility = View.GONE
                     }
-
                     is ApiLocationState.Success -> {
                         binding.recyclerView.visibility = View.VISIBLE
                         showLoading(false)
@@ -95,7 +94,6 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
                         adapter.submitList(state.list)
                         Log.i("TAG", "onCreate: ${state.list}")
                     }
-
                     else -> {
                         showLoading(false)
                         binding.recyclerView.visibility = View.GONE
@@ -116,10 +114,13 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
                 GpsMyLocationProvider(this), binding.mapView
             )
         )
+        val spCurrentLocation =
+            getSharedPreferences("current-location", Context.MODE_PRIVATE)
+        val latitude = spCurrentLocation.getFloat("latitudeFromMap", 0.0f).toDouble()
+        val longitude = spCurrentLocation.getFloat("longitudeFromMap", 0.0f).toDouble()
         val currentLocation = GeoPoint(
-            30.0574087, 31.2630744
+            latitude, longitude
         )
-
         binding.mapView.controller.animateTo(currentLocation)
 
         fabGetCurrentLocation.setOnClickListener() {
@@ -181,7 +182,7 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
             val longitude = geoPoint.longitude
             binding.mapView.controller.animateTo(geoPoint)
 
-            val sharedPreferences = getSharedPreferences("location", Context.MODE_PRIVATE)
+            val sharedPreferences = getSharedPreferences("current-location", Context.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
             editor.putFloat("latitudeFromMap", latitude.toFloat())
             editor.putFloat("longitudeFromMap", longitude.toFloat())
@@ -204,9 +205,7 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
     }
 
     override fun onClick(latitude: Double, longitude: Double, locationName: String) {
-        val currentLocation = GeoPoint(
-            latitude, longitude
-        )
+        val currentLocation = GeoPoint(latitude, longitude)
         selectedMarker = Marker(binding.mapView)
         selectedMarker!!.position = currentLocation as GeoPoint?
         selectedMarker!!.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)

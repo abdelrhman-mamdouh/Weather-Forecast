@@ -104,4 +104,6 @@ dependencies {
 
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+
 }

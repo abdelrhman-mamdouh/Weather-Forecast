@@ -4,13 +4,15 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface WeatherRepository {
-     fun  getCurrentWeatherData(latitude:Double, longitude:Double): Flow<CurrentWeatherResponse>
-     fun getHourlyWeatherData(latitude:Double, longitude:Double): Flow<HourlyWeatherResponse>
-     fun getDaysWeatherData(latitude:Double, longitude:Double): Flow<DaysWeatherResponse>
+     fun  getWeatherData(latitude:Double, longitude:Double): Flow<WeatherResponse>
      fun getLocationSuggestions(query: String): Flow<List<Suggestions>>
 
      fun getAllFavoriteLocations(): Flow<List<FavoriteLocation>>
      suspend fun delete(favoriteLocation: FavoriteLocation)
      suspend fun insert(favoriteLocation: FavoriteLocation)
+
+     fun getAllAlarms(): Flow<List<AlarmDate>>
+     suspend fun remove(alarmDate: AlarmDate)
+     suspend fun add(alarmDate: AlarmDate)
 
 }

@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.weatherguide.R
 import com.example.weatherguide.model.WeatherDaysItem
+import com.example.weatherguide.model.WeatherResponse
 
 
 class DaysWeatherAdapter(private val context: Context, private val weatherList: List<WeatherDaysItem>) :
@@ -23,13 +24,13 @@ class DaysWeatherAdapter(private val context: Context, private val weatherList: 
 
     override fun onBindViewHolder(holder: DaysViewHolder, position: Int) {
         val weatherItem = weatherList[position]
-        holder.textViewDay.text = weatherItem.day
-        holder.textViewTemp.text = "${weatherItem.temp}°C"
+        holder.textViewDay.text = weatherItem.dayName
+        holder.textViewTemp.text = "${weatherItem.temperature}°C"
         Glide.with(context).load("https://openweathermap.org/img/wn/${weatherItem.weatherIconResource}@4x.png")
             .apply(RequestOptions().override(250, 150))
             .placeholder(R.drawable.sunny)
             .into(holder.imageViewWeatherIcon)
-        holder.textViewDescription.text=weatherItem.description
+        holder.textViewDescription.text=weatherItem.weatherDescription
     }
     override fun getItemCount(): Int {
         return weatherList.size

@@ -6,9 +6,7 @@ object Constants {
     const val KEY_LATITUDE = "latitude"
     const val LOCATION_ADDRESS = "latitude"
 
-    const val CURRENT_WEATHER_URL = "https://api.openweathermap.org/data/2.5/"
-    const val HOURLY_FORECAST_URL = "https://pro.openweathermap.org/data/2.5/"
-    const val DAYS_FORECAST_URL = "https://api.openweathermap.org/data/2.5/"
+    const val WEATHER_URL = "https://api.openweathermap.org/data/3.0/"
     const val BASE_URL_Locations = "https://api.geoapify.com/v1/"
 
     const val API_KEY = "ae5388b4233466d900aaebc3b67a9c08"

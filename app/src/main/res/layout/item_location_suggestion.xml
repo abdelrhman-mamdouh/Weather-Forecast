@@ -5,12 +5,11 @@
     android:layout_height="wrap_content"
     android:elevation="@dimen/_16sdp"
     >
-
     <TextView
         android:id="@+id/suggestionTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_location"
+        android:drawableStart="@drawable/ic_add_location"
         android:drawablePadding="@dimen/_8sdp"
         android:padding="@dimen/_16sdp"
         android:textSize="@dimen/_16ssp" />

@@ -22,20 +22,10 @@ class WeatherRepositoryImpl private constructor(
             return repository!!
         }
     }
-
-
-
-    override fun getCurrentWeatherData(latitude: Double, longitude: Double): Flow<CurrentWeatherResponse> {
+    override fun getWeatherData(latitude: Double, longitude: Double): Flow<WeatherResponse> {
         return weatherRemoteDataSource.getWeatherData(latitude,longitude)
     }
 
-    override fun getHourlyWeatherData(latitude: Double, longitude: Double): Flow<HourlyWeatherResponse> {
-        return weatherRemoteDataSource.getHourlyForecast(latitude,longitude)
-    }
-
-    override fun getDaysWeatherData(latitude: Double, longitude: Double): Flow<DaysWeatherResponse>{
-        return weatherRemoteDataSource.getDaysForecast(latitude,longitude)
-    }
 
     override  fun getLocationSuggestions(query: String): Flow<List<Suggestions>> {
         return weatherRemoteDataSource.getLocationsSuggestions(query)
@@ -51,5 +41,17 @@ class WeatherRepositoryImpl private constructor(
 
     override suspend fun insert(favoriteLocation: FavoriteLocation) {
        weatherLocalDataSource.insert(favoriteLocation)
+    }
+
+    override fun getAllAlarms(): Flow<List<AlarmDate>> {
+        return weatherLocalDataSource.getAlerts()
+    }
+
+    override suspend fun remove(alarmDate: AlarmDate) {
+        weatherLocalDataSource.remove(alarmDate)
+    }
+
+    override suspend fun add(alarmDate: AlarmDate) {
+        weatherLocalDataSource.add(alarmDate)
     }
 }

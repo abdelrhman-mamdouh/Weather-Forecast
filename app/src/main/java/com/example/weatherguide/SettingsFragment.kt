@@ -35,8 +35,6 @@ class SettingsFragment : Fragment() {
             when (checkedId) {
                 R.id.radioButtonMap -> {
                     sharedPreferences.edit().putString("selected_option", "Map").apply()
-                    val intent = Intent(requireContext(), MapActivity::class.java)
-                    startActivity(intent)
                 }
                 R.id.radioButtonGPS -> {
                     sharedPreferences.edit().putString("selected_option", "GPS").apply()

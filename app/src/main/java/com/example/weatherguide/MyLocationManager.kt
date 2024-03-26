@@ -43,7 +43,11 @@ class MyLocationManager(private val context: Context) {
         fusedLocationProviderClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    Log.i("TAG", "fragment: ${location.longitude}")
+                    val sharedPreferences = context.getSharedPreferences("current-location", Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putFloat("latitudeFromMap", location.latitude.toFloat())
+                    editor.putFloat("longitudeFromMap", location.longitude.toFloat())
+                    editor.apply()
                     listener.onLocationChanged(location.latitude, location.longitude)
                 }
             }

@@ -22,8 +22,8 @@ class HoursWeatherAdapter(private val context: Context, private val weatherList:
 
     override fun onBindViewHolder(holder: HoursViewHolder, position: Int) {
         val weatherItem = weatherList[position]
-        holder.textViewHour.text = weatherItem.hour
-        holder.textViewTemp.text = "${weatherItem.temp}°C"
+        holder.textViewHour.text = weatherItem.time
+        holder.textViewTemp.text = "${weatherItem.temperature}°C"
         Glide.with(context).load("https://openweathermap.org/img/wn/${weatherItem.weatherIconResource}@4x.png")
             .apply(RequestOptions().override(250, 150))
             .placeholder(R.drawable.sunny)
