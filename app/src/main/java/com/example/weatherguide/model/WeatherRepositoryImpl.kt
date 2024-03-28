@@ -51,6 +51,10 @@ class WeatherRepositoryImpl private constructor(
         weatherLocalDataSource.remove(alarmDate)
     }
 
+    override suspend fun removeById(alarmId: Long) {
+       weatherLocalDataSource.removeById(alarmId)
+    }
+
     override suspend fun add(alarmDate: AlarmDate) {
         weatherLocalDataSource.add(alarmDate)
     }

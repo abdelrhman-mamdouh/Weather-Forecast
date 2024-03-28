@@ -3,8 +3,8 @@ package com.example.weatherguide.homeScreen.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
-import com.example.weatherguide.homeScreen.ApiState
-import com.example.weatherguide.homeScreen.ApiState.*
+import com.example.weatherguide.network.ApiState
+import com.example.weatherguide.network.ApiState.*
 import com.example.weatherguide.model.WeatherRepository
 import com.example.weatherguide.model.WeatherResponse
 import kotlinx.coroutines.Dispatchers

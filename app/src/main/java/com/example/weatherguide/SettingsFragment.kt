@@ -1,48 +1,47 @@
 package com.example.weatherguide
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioGroup
 import androidx.fragment.app.Fragment
-import com.example.weatherguide.mapScreen.view.MapActivity
-
-
+import com.example.weatherguide.databinding.FragmentSettingsBinding
 class SettingsFragment : Fragment() {
-    private lateinit var locationRadioGroup: RadioGroup
+    private lateinit var binding: FragmentSettingsBinding
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        sharedPreferences = requireContext().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        sharedPreferences =
+            requireContext().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
         val selectedOption = sharedPreferences.getString("selected_option", null)
 
-        locationRadioGroup = view.findViewById(R.id.locationRadioGroup)
-        when (selectedOption) {
-            "Map" -> locationRadioGroup.check(R.id.radioButtonMap)
-            "GPS" -> locationRadioGroup.check(R.id.radioButtonGPS)
-        }
-
-        locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.radioButtonMap -> {
                     sharedPreferences.edit().putString("selected_option", "Map").apply()
                 }
+
                 R.id.radioButtonGPS -> {
                     sharedPreferences.edit().putString("selected_option", "GPS").apply()
                 }
             }
         }
-
-        return view
+        selectedOption?.let {
+            when (it) {
+                "Map" -> binding.radioButtonMap.isChecked = true
+                "GPS" -> binding.radioButtonGPS.isChecked = true
+            }
+        }
     }
 }
-

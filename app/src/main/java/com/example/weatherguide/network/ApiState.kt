@@ -1,4 +1,4 @@
-package com.example.weatherguide.homeScreen
+package com.example.weatherguide.network
 
 sealed class ApiState<out T> {
     object Loading : ApiState<Nothing>()

@@ -1,4 +1,4 @@
-package com.example.weatherguide
+package com.example.weatherguide.utills
 
 object Constants {
     const val PREF_NAME = "LocationPrefs"

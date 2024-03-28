@@ -6,6 +6,7 @@ import java.io.Serializable
 
 @Entity(tableName = "alarm_table")
 data class AlarmDate (
-        @PrimaryKey
-        val dateTime:String
-    ): Serializable
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val dateTime:String
+): Serializable

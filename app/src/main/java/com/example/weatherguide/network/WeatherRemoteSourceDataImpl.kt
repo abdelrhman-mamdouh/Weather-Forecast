@@ -1,7 +1,7 @@
 package com.example.weatherguide.network
 
 import android.util.Log
-import com.example.weatherguide.Constants
+import com.example.weatherguide.utills.Constants
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
@@ -57,7 +57,7 @@ class WeatherRemoteSourceDataImpl private constructor() : WeatherRemoteDataSourc
 
     override fun getLocationsSuggestions(query:String) = flow {
         try {
-            val response =  locationNamesService.searchLocations(query,Constants.API_KEY_LOCATIONS)
+            val response =  locationNamesService.searchLocations(query, Constants.API_KEY_LOCATIONS)
             if (response.isSuccessful) {
                 val locationsSuggestions = response.body()?.features
                 if (locationsSuggestions != null) {

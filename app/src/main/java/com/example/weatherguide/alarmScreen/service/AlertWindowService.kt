@@ -14,17 +14,36 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
 import com.example.weatherguide.MainActivity
 import com.example.weatherguide.R
+import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModel
+import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModelFactory
+import com.example.weatherguide.db.WeatherLocalDataSourceImpl
+import com.example.weatherguide.model.WeatherRepositoryImpl
+import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
 
 class AlertWindowService : Service() {
     private lateinit var windowManager: WindowManager
     private lateinit var floatingView: View
     private lateinit var mediaPlayer: MediaPlayer
     private var message: String = ""
-   
+    private lateinit var alarmViewModelFactory: AlarmViewModelFactory
+    private lateinit var alarmViewModel:AlarmViewModel
     override fun onCreate() {
         super.onCreate()
+
+        alarmViewModelFactory = AlarmViewModelFactory(
+            WeatherRepositoryImpl.getInstance(
+                WeatherRemoteSourceDataImpl.getInstance(),
+                WeatherLocalDataSourceImpl(this)
+            )
+        )
+        val viewModelStore = ViewModelStore()
+        alarmViewModel = ViewModelProvider(viewModelStore, alarmViewModelFactory).get(AlarmViewModel::class.java)
+
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         floatingView = LayoutInflater.from(this).inflate(R.layout.custom_alert, null)
         mediaPlayer = MediaPlayer.create(this, R.raw.alarm_sound)
@@ -54,10 +73,9 @@ class AlertWindowService : Service() {
 
         val dismissButton: Button = floatingView.findViewById(R.id.btnSave)
         dismissButton.setOnClickListener {
-
             stopSelf()
-        }
 
+        }
         val rootView: View = floatingView.findViewById(R.id.root_layout)
         rootView.setOnClickListener {
             val intent = Intent(this@AlertWindowService, MainActivity::class.java)
@@ -69,6 +87,11 @@ class AlertWindowService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val receivedMessage = intent?.getStringExtra("message")
+        Log.i("TAG", "onStartCommand:${receivedMessage} ")
+        val alarmId = intent?.getLongExtra("alarmId", -1)
+        if (alarmId != null) {
+            alarmViewModel.removeAlarmById(alarmId)
+        }
         message = receivedMessage ?: ""
         val messageTextView: TextView = floatingView.findViewById(R.id.textMessage)
         messageTextView.text = message
@@ -78,6 +101,7 @@ class AlertWindowService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         mediaPlayer.stop()
         mediaPlayer.release()
         windowManager.removeView(floatingView)

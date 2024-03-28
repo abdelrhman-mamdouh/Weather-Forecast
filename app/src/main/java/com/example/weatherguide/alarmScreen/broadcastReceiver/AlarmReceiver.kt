@@ -1,6 +1,5 @@
 package com.example.weatherguide.alarmScreen.broadcastReceiver
 
-import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,10 +8,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
 import com.example.weatherguide.alarmScreen.service.AlertWindowService
 import com.example.weatherguide.db.WeatherLocalDataSourceImpl
-import com.example.weatherguide.homeScreen.ApiState
+import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
 import com.example.weatherguide.model.WeatherRepositoryImpl
@@ -25,9 +23,9 @@ import kotlinx.coroutines.launch
 class AlarmReceiver : BroadcastReceiver() {
 
     private val sharedFlow = MutableSharedFlow<Pair<Double, Double>>()
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
+        val alarmId = intent.getLongExtra("alarm_id", -1)
         val spCurrentLocation =
             context.getSharedPreferences("current-location", Context.MODE_PRIVATE)
         val latitude = spCurrentLocation.getFloat("latitudeFromMap", 0.0f).toDouble()
@@ -40,35 +38,42 @@ class AlarmReceiver : BroadcastReceiver() {
                 WeatherLocalDataSourceImpl(context)
             ), sharedFlow
         )
-        val homeViewModel = ViewModelProvider(viewModelStore, homeViewModelFactory).get(HomeViewModel::class.java)
+        val homeViewModel =
+            ViewModelProvider(viewModelStore, homeViewModelFactory).get(HomeViewModel::class.java)
 
         GlobalScope.launch(Dispatchers.Main) {
             sharedFlow.emit(latitude to longitude)
         }
-        getCurrentWeatherData(homeViewModel, context)
+        getCurrentWeatherData(homeViewModel, context, alarmId)
     }
 }
 
-private fun getCurrentWeatherData(homeViewModel: HomeViewModel, context: Context) {
+private fun getCurrentWeatherData(homeViewModel: HomeViewModel, context: Context, alarmId: Long) {
     GlobalScope.launch(Dispatchers.Main) {
         homeViewModel.weatherData.collect { state ->
             when (state) {
                 is ApiState.Success -> {
                     val serviceIntent = Intent(context, AlertWindowService::class.java)
                     if (state.data.alerts != null) {
-                        serviceIntent.putExtra("message", state.data.alerts[0].description)
+                        val description: String? = state.data.alerts
+                            .mapNotNull { it.description }
+                            .firstOrNull { it.isNotEmpty() }
+                        serviceIntent.putExtra("message", description)
+                        Log.i("TAG", "getCurrentWeatherData:${description} ")
+                        serviceIntent.putExtra("alarmId", alarmId)
                         context.startService(serviceIntent)
                     } else {
                         serviceIntent.putExtra(
                             "message",
                             "Weather is fine.There are no alerts or warnings."
                         )
+                        serviceIntent.putExtra("alarmId", alarmId)
                         context.startService(serviceIntent)
                     }
                 }
 
                 else -> {
-                    Log.i("TAG", "getCurrentWeatherData: ")
+                    Log.i("TAG", "not Success: ")
                 }
             }
         }

@@ -1,6 +1,6 @@
 package com.example.weatherguide.network
 
-import com.example.weatherguide.Constants
+import com.example.weatherguide.utills.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

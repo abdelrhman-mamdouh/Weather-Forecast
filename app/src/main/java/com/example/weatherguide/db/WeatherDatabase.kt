@@ -29,7 +29,7 @@ abstract class WeatherDatabase : RoomDatabase() {
             return Room.databaseBuilder(
                 context.applicationContext,
                 WeatherDatabase::class.java,
-                "weather_database"
+                "weather_database_new"
             )
                 .build()
         }

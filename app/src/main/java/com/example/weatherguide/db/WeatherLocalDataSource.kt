@@ -13,6 +13,7 @@ interface WeatherLocalDataSource {
 
     fun getAlerts(): Flow<List<AlarmDate>>
     suspend fun remove(alarmDate: AlarmDate)
+    suspend fun removeById(alarmId: Long)
     suspend fun add(alarmDate: AlarmDate)
 
 }

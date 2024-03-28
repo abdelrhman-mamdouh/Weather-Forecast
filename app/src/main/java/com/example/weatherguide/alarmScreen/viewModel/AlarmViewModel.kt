@@ -2,9 +2,8 @@ package com.example.weatherguide.alarmScreen.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherguide.homeScreen.ApiState
+import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.model.AlarmDate
-import com.example.weatherguide.model.FavoriteLocation
 import com.example.weatherguide.model.WeatherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +23,11 @@ class AlarmViewModel(private val iRepository: WeatherRepository) : ViewModel(){
     fun removeAlarm(alarm: AlarmDate) {
         viewModelScope.launch(Dispatchers.IO) {
             iRepository.remove(alarm)
+        }
+    }
+    fun removeAlarmById(alarmId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            iRepository.removeById(alarmId)
         }
     }
     fun addAlarm(alarm: AlarmDate) {

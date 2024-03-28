@@ -36,6 +36,10 @@ class WeatherLocalDataSourceImpl(context: Context):WeatherLocalDataSource {
         daoAlert.remove(alarmDate)
     }
 
+    override suspend fun removeById(alarmId: Long) {
+        daoAlert.removeById(alarmId)
+    }
+
     override suspend fun add(alarmDate: AlarmDate) {
         daoAlert.add(alarmDate)
     }

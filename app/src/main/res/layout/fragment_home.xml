@@ -84,7 +84,7 @@
                     android:layout_marginTop="@dimen/_90sdp"
                     android:layout_marginEnd="@dimen/_90sdp"
                     android:layout_marginBottom="@dimen/_90sdp"
-                    android:src="@drawable/sunny" />
+                    android:src="@drawable/ic_weather_clear_night" />
             </RelativeLayout>
 
 
@@ -218,7 +218,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/humidity" />
+                        android:src="@drawable/ic_humidity" />
 
                     <TextView
                         android:id="@+id/humidityTextView"
@@ -263,7 +263,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:background="@drawable/background_three"
-                        android:src="@drawable/wind" />
+                        android:src="@drawable/ic_wind" />
 
                     <TextView
                         android:id="@+id/windTextView"
@@ -302,7 +302,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/cloudy" />
+                        android:src="@drawable/ic_clouds" />
 
                     <TextView
                         android:id="@+id/cloudTextView"
@@ -341,7 +341,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/sunny" />
+                        android:src="@drawable/ic_ultraviolet" />
 
                     <TextView
                         android:id="@+id/seaLevelTextView"
@@ -349,7 +349,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="@string/sea_level"
+                        android:text="@string/ultraviolet"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_10ssp"
                         android:textStyle="bold" />
@@ -359,7 +359,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="@string/sea_level"
+                        android:text="@string/ultraviolet"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_10ssp"
                         android:textStyle="bold" />
@@ -379,7 +379,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:src="@drawable/sunny" />
+                        android:src="@drawable/ic_visibility" />
 
                     <TextView
                         android:id="@+id/visibilityTextView"

@@ -20,6 +20,8 @@ interface AlarmDAO {
     @Delete
     suspend fun remove(alarmDate: AlarmDate)
 
+    @Query("DELETE FROM alarm_table WHERE id = :alarmId")
+    suspend fun removeById(alarmId: Long)
     @Query("SELECT * FROM alarm_table")
     fun getAllAlarms(): Flow<List<AlarmDate>>
 

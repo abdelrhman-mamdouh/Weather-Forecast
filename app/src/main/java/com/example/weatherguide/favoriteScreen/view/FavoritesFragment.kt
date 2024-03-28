@@ -7,8 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -21,13 +19,11 @@ import com.example.weatherguide.db.WeatherLocalDataSourceImpl
 import com.example.weatherguide.favoriteScreen.OnClickListener
 import com.example.weatherguide.favoriteScreen.viewModel.FavoritesViewModel
 import com.example.weatherguide.favoriteScreen.viewModel.FavoritesViewModelFactory
-import com.example.weatherguide.homeScreen.ApiState
+import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.mapScreen.view.MapActivity
 import com.example.weatherguide.model.FavoriteLocation
 import com.example.weatherguide.model.WeatherRepositoryImpl
 import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
 

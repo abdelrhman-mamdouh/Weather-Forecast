@@ -2,7 +2,7 @@ package com.example.weatherguide.favoriteScreen.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherguide.homeScreen.ApiState
+import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.model.FavoriteLocation
 import com.example.weatherguide.model.WeatherRepository
 import kotlinx.coroutines.Dispatchers

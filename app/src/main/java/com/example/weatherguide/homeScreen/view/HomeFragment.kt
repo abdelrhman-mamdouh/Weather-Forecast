@@ -6,13 +6,10 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -21,14 +18,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.weatherguide.Constants
+import com.example.weatherguide.utills.Constants
 import com.example.weatherguide.MyLocationManager
 import com.example.weatherguide.R
+import com.example.weatherguide.databinding.FragmentHomeBinding
 import com.example.weatherguide.db.WeatherLocalDataSourceImpl
-import com.example.weatherguide.homeScreen.ApiState
+import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
-import com.example.weatherguide.model.Alert
 import com.example.weatherguide.model.WeatherRepositoryImpl
 import com.example.weatherguide.model.createCurrentDayWeatherHoursList
 import com.example.weatherguide.model.createWeatherAllDaysList
@@ -41,56 +38,42 @@ import java.util.Calendar
 import java.util.Locale
 
 class HomeFragment : Fragment(), LocationListener {
+    private lateinit var binding: FragmentHomeBinding
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var homeViewModelFactory: HomeViewModelFactory
-    private lateinit var weatherIconImageView: ImageView
-    private lateinit var hoursRecyclerView: RecyclerView
-    private lateinit var daysRecyclerView: RecyclerView
     private lateinit var hoursLinearManger: LinearLayoutManager
     private lateinit var daysLinearManager: LinearLayoutManager
-    private lateinit var pressureTextView: TextView
-    private lateinit var weatherDescriptionTextView: TextView
-    private lateinit var temperatureTextView: TextView
-    private lateinit var dateTextView: TextView
-    private lateinit var humidityTextView: TextView
-    private lateinit var windTextView: TextView
-    private lateinit var cloudTextView: TextView
-    private lateinit var seaLevelTextView: TextView
-    private lateinit var visibilityTextView: TextView
-    private lateinit var locationTextView: TextView
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var locationManager: MyLocationManager
     private val sharedFlow = MutableSharedFlow<Pair<Double, Double>>()
     private lateinit var loader: ProgressBar
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private val sharedFlowAlert = MutableSharedFlow<String>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+    ): View {
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initialization(view)
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
         locationManager = MyLocationManager(context = requireContext())
         loader = view.findViewById(R.id.loader)
 
-        hoursRecyclerView = view.findViewById(R.id.hoursRecyclerView)
-        hoursRecyclerView.setHasFixedSize(true)
+        binding.hoursRecyclerView.setHasFixedSize(true)
         hoursLinearManger = LinearLayoutManager(requireContext())
         hoursLinearManger.orientation = RecyclerView.HORIZONTAL
-        hoursRecyclerView.layoutManager = hoursLinearManger
-        daysRecyclerView = view.findViewById(R.id.daysRecyclerView)
-        daysRecyclerView.setHasFixedSize(true)
+        binding.hoursRecyclerView.layoutManager = hoursLinearManger
+        binding.daysRecyclerView.setHasFixedSize(true)
         daysLinearManager = LinearLayoutManager(requireContext())
         daysLinearManager.orientation = RecyclerView.VERTICAL
-        daysRecyclerView.layoutManager = daysLinearManager
+        binding.daysRecyclerView.layoutManager = daysLinearManager
         homeViewModelFactory = HomeViewModelFactory(
             WeatherRepositoryImpl.getInstance(
                 WeatherRemoteSourceDataImpl.getInstance(),
@@ -137,26 +120,27 @@ class HomeFragment : Fragment(), LocationListener {
 
                         val weatherHoursList = createCurrentDayWeatherHoursList(state.data.hourly)
                         val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
-                        hoursRecyclerView.adapter = hoursAdapter
+                        binding.hoursRecyclerView.adapter = hoursAdapter
                         hoursAdapter.notifyDataSetChanged()
 
                         val weatherDaysList = createWeatherAllDaysList(state.data.daily)
                         val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
-                        daysRecyclerView.adapter = daysAdapter
+                        binding.daysRecyclerView.adapter = daysAdapter
                         daysAdapter.notifyDataSetChanged()
-
-                        locationTextView.text = "${state.data.timezone}"
-                        pressureTextView.text = "${state.data.current.pressure} hPa"
-                        seaLevelTextView.text = "${state.data.current.uvi} hPa"
-                        humidityTextView.text = "${state.data.current.humidity}%"
-                        windTextView.text = "${state.data.current.windSpeed} m/s"
-                        cloudTextView.text = "${state.data.current.clouds} %"
-                        visibilityTextView.text = "${state.data.current.visibility} m"
-                        weatherDescriptionTextView.text = state.data.current.weather[0].description
-                        temperatureTextView.text =
+                        binding.locationTextView.text = "${state.data.timezone}"
+                        binding.pressureTextView.text = "${state.data.current.pressure} hPa"
+                        binding.seaLevelTextView.text = "${state.data.current.uvi} hPa"
+                        binding.humidityTextView.text = "${state.data.current.humidity}%"
+                        binding.windTextView.text = "${state.data.current.windSpeed} m/s"
+                        binding.cloudTextView.text = "${state.data.current.clouds} %"
+                        binding.visibilityTextView.text = "${state.data.current.visibility} m"
+                        binding.weatherDescriptionTextView.text =
+                            state.data.current.weather[0].description
+                        binding.temperatureTextView.text =
                             "${convertKelvinToCelsius(state.data.current.temp)}°C"
-                        dateTextView.text = getCurrentDateFormatted()
+                        binding.dateTextView.text = getCurrentDateFormatted()
                     }
+
                     else -> {
                         showLoading(false)
                     }
@@ -165,20 +149,6 @@ class HomeFragment : Fragment(), LocationListener {
         }
     }
 
-
-    private fun initialization(view: View) {
-        weatherIconImageView = view.findViewById<ImageView>(R.id.weatherIconImageView)
-        pressureTextView = view.findViewById(R.id.pressureTextView)
-        humidityTextView = view.findViewById(R.id.humidityTextView)
-        windTextView = view.findViewById(R.id.windTextView)
-        cloudTextView = view.findViewById(R.id.cloudTextView)
-        seaLevelTextView = view.findViewById(R.id.seaLevelTextView)
-        visibilityTextView = view.findViewById(R.id.visibilityTextView)
-        locationTextView = view.findViewById(R.id.locationTextView)
-        weatherDescriptionTextView = view.findViewById(R.id.weatherDescriptionTextView)
-        temperatureTextView = view.findViewById(R.id.temperatureTextView)
-        dateTextView = view.findViewById(R.id.dateTextView)
-    }
 
     private fun convertKelvinToCelsius(kelvin: Double): Int {
         return (kelvin - 273.15).toInt()
@@ -223,6 +193,7 @@ class HomeFragment : Fragment(), LocationListener {
                 }
 
             }
+
             else -> {
                 locationManager.startLocationUpdates(this)
             }
