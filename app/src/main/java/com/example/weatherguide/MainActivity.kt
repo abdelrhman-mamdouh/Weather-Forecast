@@ -1,70 +1,70 @@
 package com.example.weatherguide
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.RadioButton
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.productsmvvm.db.WeatherDatabase
-import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.weatherguide.databinding.ActivityMainBinding
+import com.example.weatherguide.databinding.InitialSettingsDialogBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var navigationView: NavigationView
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var toolbar: Toolbar
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE)
 
-        drawerLayout = findViewById(R.id.drawer_layout)
-        navigationView = findViewById(R.id.navigator_layout)
-        drawerLayout = findViewById(R.id.drawer_layout)
-        navigationView = findViewById(R.id.navigator_layout)
-        toolbar = findViewById(R.id.my_toolbar)
-        navigationView.setNavigationItemSelectedListener { menuItem ->
+        if (isFirstRun()) {
+            showInitialSettingsDialog()
+        } else {
+            startActivity()
+        }
+    }
 
-            when (menuItem.itemId) {
-                R.id.homeFragment -> {
-                    toolbar.title = "Home"
-                    navigateToFragment(R.id.homeFragment)
+    private fun startActivity() {
+        binding.apply {
+            navigatorLayout.setNavigationItemSelectedListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.homeFragment -> {
+                        binding.myToolbar.title = "Home"
+                        navigateToFragment(R.id.homeFragment)
+                    }
+
+                    R.id.favoritesFragment -> {
+                        binding.myToolbar.title = "Favorites"
+                        navigateToFragment(R.id.favoritesFragment)
+                    }
+
+                    R.id.alertsFragment -> {
+                        binding.myToolbar.title = "Alerts"
+                        navigateToFragment(R.id.alertsFragment)
+                    }
+
+                    R.id.settingsFragment -> {
+                        binding.myToolbar.title = "Settings"
+                        navigateToFragment(R.id.settingsFragment)
+                    }
                 }
-
-                R.id.favoritesFragment -> {
-                    toolbar.title = "Favorites"
-                    navigateToFragment(R.id.favoritesFragment)
-                }
-
-                R.id.alertsFragment -> {
-                    toolbar.title = "Alerts"
-                    navigateToFragment(R.id.alertsFragment)
-                }
-
-                R.id.settingsFragment -> {
-                    toolbar.title = "Settings"
-                    navigateToFragment(R.id.settingsFragment)
-                }
+                drawerLayout.closeDrawer(GravityCompat.START)
+                true
             }
-            drawerLayout.closeDrawer(GravityCompat.START)
-            true
-        }
 
-        val toolbar = findViewById<Toolbar>(R.id.my_toolbar)
-        toolbar.setNavigationOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
+            binding.myToolbar.setNavigationOnClickListener {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
         }
-
     }
 
     override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -76,7 +76,43 @@ class MainActivity : AppCompatActivity() {
         navController.navigate(fragmentId)
     }
 
+    private fun isFirstRun(): Boolean {
+        return !sharedPreferences.getBoolean("isFirstRun", false)
+    }
+
+    private fun showInitialSettingsDialog() {
+        val dialogBuilder = AlertDialog.Builder(this)
+        val dialogBinding = InitialSettingsDialogBinding.inflate(layoutInflater)
+        dialogBuilder.setView(dialogBinding.root)
+
+        val dialog = dialogBuilder.create()
+
+        dialogBinding.btnSave.setOnClickListener {
+            with(sharedPreferences.edit()) {
+                val locationSelectedId = dialogBinding.locationRadioGroup.checkedRadioButtonId
+                val radioButtonLocation =
+                    dialogBinding.root.findViewById<RadioButton>(locationSelectedId)
+                putString("location", radioButtonLocation.text.toString())
+                val notificationSelectedId = dialogBinding.notifyRadioGroup.checkedRadioButtonId
+                val radioButtonNotification =
+                    dialogBinding.root.findViewById<RadioButton>(notificationSelectedId)
+                putString("notification", radioButtonNotification.text.toString())
+                putString("language", resources.getString(R.string.english))
+                putString("windSpeed", resources.getString(R.string.meter_sec))
+                putString("temperature", resources.getString(R.string.celsius))
+                putString("theme", resources.getString(R.string.light))
+                putBoolean("isFirstRun", true)
+                apply()
+                startActivity()
+            }
+            dialog.dismiss()
+        }
+
+        dialogBuilder.setCancelable(false)
+        dialog.show()
+
+
+    }
+
+
 }
-
-
-

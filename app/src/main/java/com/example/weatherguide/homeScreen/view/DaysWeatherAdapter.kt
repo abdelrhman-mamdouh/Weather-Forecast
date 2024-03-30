@@ -29,10 +29,16 @@ class DaysWeatherAdapter(
         val weatherItem = weatherList[position]
         holder.binding.dayTextView.text = weatherItem.dayName
         holder.binding.tempTextView.text = "${weatherItem.temperature}°C"
-        Glide.with(context)
-            .load("https://openweathermap.org/img/wn/${weatherItem.weatherIconResource}@4x.png")
-            .apply(RequestOptions().override(250, 150)).placeholder(R.drawable.sunny)
-            .into(holder.binding.weatherIconImageView)
+        if (weatherItem.weatherIconResource == "01d") {
+            holder.binding.weatherIconImageView.setImageResource(R.drawable.sunny)
+        } else if (weatherItem.weatherIconResource == "01n") {
+            holder.binding.weatherIconImageView.setImageResource(R.drawable.ic_night)
+        } else {
+            Glide.with(context)
+                .load("https://openweathermap.org/img/wn/${weatherItem.weatherIconResource}@4x.png")
+                .apply(RequestOptions().override(250, 150)).placeholder(R.drawable.sunny)
+                .into(holder.binding.weatherIconImageView)
+        }
         holder.binding.descriptionTextView.text = weatherItem.weatherDescription
     }
 

@@ -105,16 +105,21 @@ class FavoritesFragment : Fragment(), OnClickListener<FavoriteLocation> {
     }
 
     override fun onClickLocationFavorite(favoriteLocation: FavoriteLocation) {
+        val spSettings = requireContext().getSharedPreferences("MySettings", Context.MODE_PRIVATE)
+        val location = spSettings.getString("location", "")
+
+        if (location == requireContext().resources.getString(R.string.gps)) {
+            spSettings.edit().putString("location", requireContext().resources.getString(R.string.map)).apply()
+        }
         val lat = favoriteLocation.lat
         val long = favoriteLocation.lon
-        Log.i("TAG", "onClickLocationFavorite: ${lat}+${long}")
         val sharedPreferences = requireContext().getSharedPreferences("current-location", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putFloat("latitudeFromMap", lat.toFloat())
         editor.putFloat("longitudeFromMap", long.toFloat())
         editor.apply()
-        val navController = findNavController()
-        navController.navigate(R.id.homeFragment)
-
+        val intent = activity?.intent
+        activity?.finish()
+        startActivity(intent!!)
     }
 }

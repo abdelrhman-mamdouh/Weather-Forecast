@@ -1,6 +1,7 @@
 package com.example.weatherguide.network
 
 import android.util.Log
+import com.example.weatherguide.model.SharedFlowObject
 import com.example.weatherguide.utills.Constants
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -27,9 +28,20 @@ class WeatherRemoteSourceDataImpl private constructor() : WeatherRemoteDataSourc
         }
     }
 
-    override fun getWeatherData(latitude:Double,longitude:Double)=flow{
+    override fun getWeatherData(sharedFlowObject: SharedFlowObject) = flow {
+        var units = "standard"
+        if (sharedFlowObject.temp == "Celsius" && sharedFlowObject.windSpeed == "Meter") {
+            units = "metric"
+        }
+        if (sharedFlowObject.temp == "Fahrenheit" && sharedFlowObject.windSpeed == "Mile") {
+            units = "imperial "
+        }
         try {
-            val response = weatherService.getCurrentWeatherForecast(latitude, longitude, Constants.API_KEY)
+            val response = weatherService.getCurrentWeatherForecast(
+                sharedFlowObject.latitude,
+                sharedFlowObject.longitude,
+                Constants.API_KEY, sharedFlowObject.language, units
+            )
             if (response.isSuccessful) {
                 val weatherResponse = response.body()
                 if (weatherResponse != null) {
@@ -55,9 +67,9 @@ class WeatherRemoteSourceDataImpl private constructor() : WeatherRemoteDataSourc
         }
     }
 
-    override fun getLocationsSuggestions(query:String) = flow {
+    override fun getLocationsSuggestions(query: String) = flow {
         try {
-            val response =  locationNamesService.searchLocations(query, Constants.API_KEY_LOCATIONS)
+            val response = locationNamesService.searchLocations(query, Constants.API_KEY_LOCATIONS)
             if (response.isSuccessful) {
                 val locationsSuggestions = response.body()?.features
                 if (locationsSuggestions != null) {

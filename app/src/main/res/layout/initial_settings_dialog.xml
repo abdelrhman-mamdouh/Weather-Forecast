@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_marginVertical="@dimen/_16sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/muli_black"
+        android:text="Initial Setup"
+        android:drawableLeft="@drawable/ic_settings"
+        android:drawablePadding="@dimen/_8sdp"
+
+        android:textSize="20sp"
+        android:textStyle="bold"
+       />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="@dimen/_8sdp"
+        >
+
+        <TextView
+            style="@style/TextViewStyle3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:layout_marginRight="@dimen/_58sdp"
+            android:text="@string/location"
+         />
+
+        <RadioGroup
+            android:id="@+id/locationRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioButtonMap"
+                style="@style/TextViewStyle2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/map"
+                android:checked="true"
+                android:textSize="@dimen/_12ssp"
+
+                app:buttonTint="@color/primary_color" />
+
+            <RadioButton
+                android:id="@+id/radioButtonGPS"
+                style="@style/TextViewStyle2"
+                android:layout_marginLeft="@dimen/_20sdp"
+                android:layout_width="wrap_content"
+                android:textSize="@dimen/_12ssp"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/primary_color"
+                android:text="@string/gps"
+
+                app:buttonTint="@color/primary_color" />
+        </RadioGroup>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            style="@style/TextViewStyle3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/_35sdp"
+            android:text="@string/notifications"
+         />
+
+        <RadioGroup
+            android:id="@+id/notifyRadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioButtonEnable"
+                style="@style/TextViewStyle2"
+                app:buttonTint="@color/primary_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/enable"
+            />
+
+            <RadioButton
+                android:id="@+id/radioButtonDisable"
+                style="@style/TextViewStyle2"
+                app:buttonTint="@color/primary_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/disable"
+            />
+        </RadioGroup>
+    </LinearLayout>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSave"
+        android:layout_margin="@dimen/_16sdp"
+        android:fontFamily="@font/muli_black"
+        android:textColor="@color/white"
+        android:background="@drawable/background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/save"
+      />
+</LinearLayout>

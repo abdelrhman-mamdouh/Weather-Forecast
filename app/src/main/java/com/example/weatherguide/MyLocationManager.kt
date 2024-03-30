@@ -11,6 +11,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.example.weatherguide.homeScreen.view.LocationListener
+import com.example.weatherguide.model.SharedFlowObject
+import com.example.weatherguide.utills.Util
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationServices
@@ -43,16 +45,12 @@ class MyLocationManager(private val context: Context) {
         fusedLocationProviderClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
-                    val sharedPreferences = context.getSharedPreferences("current-location", Context.MODE_PRIVATE)
-                    val editor = sharedPreferences.edit()
-                    editor.putFloat("latitudeFromMap", location.latitude.toFloat())
-                    editor.putFloat("longitudeFromMap", location.longitude.toFloat())
-                    editor.apply()
-                    listener.onLocationChanged(location.latitude, location.longitude)
+
+                    var myObject = Util.getSharedFlowObject(context)
+                    listener.onLocationChanged(myObject)
                 }
             }
             .addOnFailureListener { exception ->
-                // Handle failure to get location
                 Log.e("TAG", "Error getting location: $exception")
             }
     }

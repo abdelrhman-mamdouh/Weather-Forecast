@@ -99,11 +99,13 @@ dependencies {
     // Google Play services dependency for accessing location services
     implementation("com.google.android.gms:play-services-location:21.0.0")
 
-    // Google Places SDK dependency for accessing and displaying places information
     implementation("com.google.android.libraries.places:places:3.3.0")
 
     implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     implementation ("com.facebook.shimmer:shimmer:0.5.0")
+
+    implementation ("com.airbnb.android:lottie:6.3.0")
+
 
 }

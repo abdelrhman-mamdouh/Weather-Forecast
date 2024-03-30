@@ -12,13 +12,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieAnimationView"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_190sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/backgroundd" />
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:paddingHorizontal="@dimen/_30sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_16sdp"
+            android:paddingHorizontal="@dimen/_30sdp"
 
             app:cardCornerRadius="@dimen/_40sdp"
             app:cardElevation="@dimen/_16sdp"
@@ -46,8 +58,8 @@
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:defaultNavHost="true"
             android:layout_marginTop="@dimen/_10ssp"
+            app:defaultNavHost="true"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

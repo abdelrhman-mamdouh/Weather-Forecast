@@ -1,5 +1,8 @@
 package com.example.weatherguide.model
 
+import android.content.Context
+import androidx.core.content.ContextCompat.getString
+import com.example.weatherguide.R
 import com.google.gson.annotations.SerializedName
 
 import java.text.SimpleDateFormat
@@ -129,18 +132,28 @@ data class WeatherDescription(
 )
 
 
-fun getNameFromDate(unixTimestamp: Long): String {
+fun getNameFromDate(unixTimestamp: Long,context: Context): String {
     val date = Date(unixTimestamp * 1000)
-    val simpleDateFormat = SimpleDateFormat("EEEE", Locale.getDefault())
-    return simpleDateFormat.format(date)
+    var sharedPreferences =
+        context.getSharedPreferences("MySettings", Context.MODE_PRIVATE)
+    val language = sharedPreferences.getString("language", "")
+    if (language == "Arabic") {
+        val locale = Locale("ar", "EG")
+        val simpleDateFormat = SimpleDateFormat("EEEE", locale)
+        return simpleDateFormat.format(date)
+    } else {
+        val simpleDateFormat = SimpleDateFormat("EEEE", Locale.getDefault())
+        return simpleDateFormat.format(date)
+    }
 }
 
-fun createWeatherAllDaysList(weatherDataList: List<DailyWeather>): List<WeatherDaysItem> {
+
+fun createWeatherAllDaysList(context: Context,weatherDataList: List<DailyWeather>): List<WeatherDaysItem> {
     val weatherItemList = mutableListOf<WeatherDaysItem>()
     val encounteredDays = mutableSetOf<String>()
 
     weatherDataList.forEach { weatherData ->
-        val dayName = getNameFromDate(weatherData.dt)
+        val dayName = getNameFromDate(weatherData.dt,context)
         if (!encounteredDays.contains(dayName)) {
             val temperatureCelsius = convertKelvinToCelsius(weatherData.temp.day)
             val weatherIconResource = weatherData.weather.firstOrNull()?.icon ?: ""
@@ -156,8 +169,8 @@ fun createWeatherAllDaysList(weatherDataList: List<DailyWeather>): List<WeatherD
             encounteredDays.add(dayName)
         }
     }
-    weatherItemList[0].dayName="Today"
-    weatherItemList[1].dayName="Tomorrow"
+    weatherItemList[0].dayName=getString(context,R.string.today)
+    weatherItemList[1].dayName=getString(context,R.string.tomorrow)
     return weatherItemList
 }
 

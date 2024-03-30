@@ -87,5 +87,10 @@
     <string name="dismiss_alarm">Dismiss</string>
     <string name="weather_is_fine">Weather is fine</string>
     <string name="weather_guide_alarm">Weather Guide Alarm</string>
-
+    <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="dark">Dark</string>
+    <string name="light">Light</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
 </resources>

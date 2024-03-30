@@ -9,27 +9,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.weatherguide.utills.Constants
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.weatherguide.MyLocationManager
 import com.example.weatherguide.R
 import com.example.weatherguide.databinding.FragmentHomeBinding
 import com.example.weatherguide.db.WeatherLocalDataSourceImpl
-import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
+import com.example.weatherguide.model.SharedFlowObject
 import com.example.weatherguide.model.WeatherRepositoryImpl
 import com.example.weatherguide.model.createCurrentDayWeatherHoursList
 import com.example.weatherguide.model.createWeatherAllDaysList
+import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.utills.Constants
+import com.example.weatherguide.utills.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -45,9 +48,7 @@ class HomeFragment : Fragment(), LocationListener {
     private lateinit var daysLinearManager: LinearLayoutManager
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var locationManager: MyLocationManager
-    private val sharedFlow = MutableSharedFlow<Pair<Double, Double>>()
-    private lateinit var loader: ProgressBar
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private val sharedFlow = MutableSharedFlow<SharedFlowObject>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,10 +62,12 @@ class HomeFragment : Fragment(), LocationListener {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
+        binding.myLayout.visibility = View.GONE
+        if (binding.myLayout.visibility == View.GONE) {
+            binding.swipeDown.visibility = View.VISIBLE
+        }
         locationManager = MyLocationManager(context = requireContext())
-        loader = view.findViewById(R.id.loader)
 
         binding.hoursRecyclerView.setHasFixedSize(true)
         hoursLinearManger = LinearLayoutManager(requireContext())
@@ -82,30 +85,37 @@ class HomeFragment : Fragment(), LocationListener {
         )
         homeViewModel =
             ViewModelProvider(requireActivity(), homeViewModelFactory)[HomeViewModel::class.java]
-
         if (locationManager.checkPermissions()) {
             if (locationManager.isLocationEnabled()) {
                 onLocationSourceSelected()
-
+                getCurrentWeatherData()
             } else {
                 locationManager.enableLocationServices()
             }
         } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                Constants.REQUEST_LOCATION_CODE
-            )
+
+            AlertDialog.Builder(requireContext())
+                .setMessage("You need to allow location permissions for the app to get weather data.")
+                .setPositiveButton("Allow") { dialog, which ->
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        ),
+                        Constants.REQUEST_LOCATION_CODE
+                    )
+                }
+                .setNegativeButton("Cancel") { dialog, which ->
+                    dialog.dismiss()
+                }
+                .show()
         }
-        getCurrentWeatherData()
-        swipeRefreshLayout.setOnRefreshListener {
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
             reloadFragment()
         }
     }
-
 
     private fun getCurrentWeatherData() {
         lifecycleScope.launch(Dispatchers.Main) {
@@ -113,17 +123,20 @@ class HomeFragment : Fragment(), LocationListener {
                 when (state) {
                     is ApiState.Loading -> {
                         showLoading(true)
+                        binding.swipeDown.visibility = View.GONE
                     }
 
                     is ApiState.Success -> {
-                        showLoading(false)
 
+                        showLoading(false)
+                        binding.swipeDown.visibility = View.GONE
+                        binding.myLayout.visibility = View.VISIBLE
                         val weatherHoursList = createCurrentDayWeatherHoursList(state.data.hourly)
                         val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
                         binding.hoursRecyclerView.adapter = hoursAdapter
                         hoursAdapter.notifyDataSetChanged()
 
-                        val weatherDaysList = createWeatherAllDaysList(state.data.daily)
+                        val weatherDaysList = createWeatherAllDaysList(requireContext(),state.data.daily)
                         val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
                         binding.daysRecyclerView.adapter = daysAdapter
                         daysAdapter.notifyDataSetChanged()
@@ -134,6 +147,17 @@ class HomeFragment : Fragment(), LocationListener {
                         binding.windTextView.text = "${state.data.current.windSpeed} m/s"
                         binding.cloudTextView.text = "${state.data.current.clouds} %"
                         binding.visibilityTextView.text = "${state.data.current.visibility} m"
+                        if (state.data.current.weather[0].icon.equals("01d")) {
+                            binding.weatherIconImageView.setImageResource(R.drawable.sunny)
+                        } else if (state.data.current.weather[0].icon.equals("01n")) {
+                            binding.weatherIconImageView.setImageResource(R.drawable.ic_night)
+                        } else {
+                            Glide.with(requireContext())
+                                .load("https://openweathermap.org/img/wn/${state.data.current.weather[0].icon}@4x.png")
+                                .apply(RequestOptions().override(450, 350))
+                                .placeholder(R.drawable.sunny)
+                                .into(binding.weatherIconImageView)
+                        }
                         binding.weatherDescriptionTextView.text =
                             state.data.current.weather[0].description
                         binding.temperatureTextView.text =
@@ -147,8 +171,8 @@ class HomeFragment : Fragment(), LocationListener {
                 }
             }
         }
-    }
 
+    }
 
     private fun convertKelvinToCelsius(kelvin: Double): Int {
         return (kelvin - 273.15).toInt()
@@ -171,27 +195,23 @@ class HomeFragment : Fragment(), LocationListener {
         }
     }
 
-    override fun onLocationChanged(latitude: Double, longitude: Double) {
+    override fun onLocationChanged(sharedFlowObject: SharedFlowObject) {
         lifecycleScope.launch(Dispatchers.Main) {
-            val pair = Pair(latitude, longitude)
-            sharedFlow.emit(pair)
+            sharedFlow.emit(sharedFlowObject)
         }
     }
 
     private fun onLocationSourceSelected() {
         sharedPreferences =
-            requireActivity().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
-        val selectedOption = sharedPreferences.getString("selected_option", null)
+            requireActivity().getSharedPreferences("MySettings", Context.MODE_PRIVATE)
+        val selectedOption = sharedPreferences.getString("location", null)
         when (selectedOption) {
-            "Map" -> {
-                val sharedPreferences =
-                    requireActivity().getSharedPreferences("current-location", Context.MODE_PRIVATE)
-                val latitude = sharedPreferences.getFloat("latitudeFromMap", 0.0f).toDouble()
-                val longitude = sharedPreferences.getFloat("longitudeFromMap", 0.0f).toDouble()
-                lifecycleScope.launch(Dispatchers.Main) {
-                    sharedFlow.emit(latitude to longitude)
-                }
+            requireContext().resources.getString(R.string.map) -> {
 
+               var myObject = Util.getSharedFlowObject(requireContext())
+                lifecycleScope.launch(Dispatchers.Main){
+                    sharedFlow.emit(myObject)
+                }
             }
 
             else -> {
@@ -201,7 +221,7 @@ class HomeFragment : Fragment(), LocationListener {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        loader.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.loader.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -209,7 +229,7 @@ class HomeFragment : Fragment(), LocationListener {
         val intent = activity?.intent
         activity?.finish()
         startActivity(intent!!)
-        swipeRefreshLayout.isRefreshing = false
+        binding.swipeRefreshLayout.isRefreshing = false
     }
 }
 

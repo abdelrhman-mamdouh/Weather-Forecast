@@ -2,6 +2,7 @@ package com.example.weatherguide.homeScreen.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherguide.model.SharedFlowObject
 
 import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.network.ApiState.*
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class HomeViewModel(
     private val iRepository: WeatherRepository,
-    private val sharedFlow: MutableSharedFlow<Pair<Double, Double>>
+    private val sharedFlow: MutableSharedFlow<SharedFlowObject>
 ) : ViewModel() {
 
     private val _weatherData: MutableStateFlow<ApiState<WeatherResponse>> =
@@ -27,15 +28,15 @@ class HomeViewModel(
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            sharedFlow.collect { (latitude, longitude) ->
-                getData(latitude, longitude)
+            sharedFlow.collect {
+                getData(it)
             }
         }
     }
-    private fun getData(latitude: Double, longitude: Double) {
+    private fun getData(sharedFlowObject: SharedFlowObject) {
         viewModelScope.launch {
             _weatherData.value = Loading
-            iRepository.getWeatherData(latitude,longitude).catch { e->
+            iRepository.getWeatherData(sharedFlowObject).catch { e->
                 _weatherData.value= Failure(e)
             }.collect{
                 _weatherData.value= Success(it)

@@ -22,8 +22,8 @@ class WeatherRepositoryImpl private constructor(
             return repository!!
         }
     }
-    override fun getWeatherData(latitude: Double, longitude: Double): Flow<WeatherResponse> {
-        return weatherRemoteDataSource.getWeatherData(latitude,longitude)
+    override fun getWeatherData(sharedFlowObject: SharedFlowObject): Flow<WeatherResponse> {
+        return weatherRemoteDataSource.getWeatherData(sharedFlowObject)
     }
 
 

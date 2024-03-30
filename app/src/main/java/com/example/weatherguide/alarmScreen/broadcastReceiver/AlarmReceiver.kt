@@ -13,8 +13,10 @@ import com.example.weatherguide.db.WeatherLocalDataSourceImpl
 import com.example.weatherguide.network.ApiState
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
+import com.example.weatherguide.model.SharedFlowObject
 import com.example.weatherguide.model.WeatherRepositoryImpl
 import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.utills.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,14 +24,12 @@ import kotlinx.coroutines.launch
 
 class AlarmReceiver : BroadcastReceiver() {
 
-    private val sharedFlow = MutableSharedFlow<Pair<Double, Double>>()
+    private val sharedFlow = MutableSharedFlow<SharedFlowObject>()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onReceive(context: Context, intent: Intent) {
         val alarmId = intent.getLongExtra("alarm_id", -1)
-        val spCurrentLocation =
-            context.getSharedPreferences("current-location", Context.MODE_PRIVATE)
-        val latitude = spCurrentLocation.getFloat("latitudeFromMap", 0.0f).toDouble()
-        val longitude = spCurrentLocation.getFloat("longitudeFromMap", 0.0f).toDouble()
+
+        var myObject = Util.getSharedFlowObject(context)
 
         val viewModelStore = ViewModelStore()
         val homeViewModelFactory = HomeViewModelFactory(
@@ -42,7 +42,7 @@ class AlarmReceiver : BroadcastReceiver() {
             ViewModelProvider(viewModelStore, homeViewModelFactory).get(HomeViewModel::class.java)
 
         GlobalScope.launch(Dispatchers.Main) {
-            sharedFlow.emit(latitude to longitude)
+            sharedFlow.emit(myObject)
         }
         getCurrentWeatherData(homeViewModel, context, alarmId)
     }

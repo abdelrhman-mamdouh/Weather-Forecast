@@ -31,12 +31,17 @@ class HoursWeatherAdapter(
 
         binding.hourTextView.text = weatherItem.time
         binding.tempTextView.text = "${weatherItem.temperature}°C"
-
-        Glide.with(context)
-            .load("https://openweathermap.org/img/wn/${weatherItem.weatherIconResource}@4x.png")
-            .apply(RequestOptions().override(250, 150))
-            .placeholder(R.drawable.ic_weather_clear_day)
-            .into(binding.weatherIconImageView)
+        if (weatherItem.weatherIconResource == "01d") {
+            holder.binding.weatherIconImageView.setImageResource(R.drawable.sunny)
+        } else if (weatherItem.weatherIconResource == "01n") {
+            holder.binding.weatherIconImageView.setImageResource(R.drawable.ic_night)
+        } else {
+            Glide.with(context)
+                .load("https://openweathermap.org/img/wn/${weatherItem.weatherIconResource}@4x.png")
+                .apply(RequestOptions().override(250, 150))
+                .placeholder(R.drawable.sunny)
+                .into(binding.weatherIconImageView)
+        }
     }
 
     override fun getItemCount(): Int {
