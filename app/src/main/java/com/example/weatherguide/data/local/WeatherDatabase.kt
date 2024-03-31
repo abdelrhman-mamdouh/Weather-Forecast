@@ -1,15 +1,13 @@
-package com.example.productsmvvm.db
+package com.example.weatherguide.data.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.weatherguide.db.AlarmDAO
-import com.example.weatherguide.db.FavoriteLocationDAO
 import com.example.weatherguide.model.AlarmDate
 import com.example.weatherguide.model.FavoriteLocation
 
-@Database(entities = [FavoriteLocation::class, AlarmDate::class], version = 1)
+@Database(entities = [FavoriteLocation::class, AlarmDate::class], version = 1, exportSchema = false)
 abstract class WeatherDatabase : RoomDatabase() {
 
     abstract fun weatherDAO(): FavoriteLocationDAO

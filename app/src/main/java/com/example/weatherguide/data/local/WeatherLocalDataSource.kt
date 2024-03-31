@@ -1,4 +1,4 @@
-package com.example.weatherguide.db
+package com.example.weatherguide.data.local
 
 import android.content.Context
 import com.example.weatherguide.model.AlarmDate

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="WeatherView">
+        <attr name="windSpeed" format="float"/>
+        <attr name="windDirection" format="integer"/>
+        <attr name="rainIntensity" format="float"/>
+        <attr name="rainDistance" format="integer"/>
+        <attr name="snowIntensity" format="float"/>
+        <attr name="snowDistance" format="integer"/>
+    </declare-styleable>
+</resources>

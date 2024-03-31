@@ -57,5 +57,15 @@
     <style name="ToolbarAppearance">
         <item name="cornerRadius">40dp</item>
     </style>
+    <style name="Base.Theme.WeatherGuide.Light" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/gray</item>
+        <item name="colorPrimaryDark">@color/gray</item>
+        <!-- Other light mode attributes -->
+    </style>
 
+    <style name="Base.Theme.WeatherGuide.Dark" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorPrimaryDark">@color/blue</item>
+        <!-- Other dark mode attributes -->
+    </style>
 </resources>

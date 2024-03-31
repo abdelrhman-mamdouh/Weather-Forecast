@@ -10,8 +10,9 @@ import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
 import com.example.weatherguide.databinding.ActivityMainBinding
 import com.example.weatherguide.databinding.InitialSettingsDialogBinding
+import com.github.matteobattilana.weather.PrecipType
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),MainActivityListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -19,6 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
         sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE)
 
         if (isFirstRun()) {
@@ -84,9 +87,7 @@ class MainActivity : AppCompatActivity() {
         val dialogBuilder = AlertDialog.Builder(this)
         val dialogBinding = InitialSettingsDialogBinding.inflate(layoutInflater)
         dialogBuilder.setView(dialogBinding.root)
-
         val dialog = dialogBuilder.create()
-
         dialogBinding.btnSave.setOnClickListener {
             with(sharedPreferences.edit()) {
                 val locationSelectedId = dialogBinding.locationRadioGroup.checkedRadioButtonId
@@ -112,6 +113,16 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
 
 
+    }
+
+    override fun updateBackgroundAnimation(condition: String) {
+        try {
+            val precipType = PrecipType.valueOf(condition)
+            binding.weatherView.setWeatherData(precipType)
+        } catch (e: IllegalArgumentException) {
+
+            binding.weatherView.setWeatherData(PrecipType.CLEAR)
+        }
     }
 
 

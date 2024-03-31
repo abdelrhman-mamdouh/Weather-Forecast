@@ -1,4 +1,4 @@
-package com.example.weatherguide.network
+package com.example.weatherguide.data.remote
 
 import android.util.Log
 import com.example.weatherguide.model.SharedFlowObject

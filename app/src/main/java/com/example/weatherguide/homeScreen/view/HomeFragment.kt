@@ -19,18 +19,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.weatherguide.MainActivityListener
 import com.example.weatherguide.MyLocationManager
 import com.example.weatherguide.R
+import com.example.weatherguide.data.local.WeatherLocalDataSourceImpl
+import com.example.weatherguide.data.remote.ApiState
+import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
 import com.example.weatherguide.databinding.FragmentHomeBinding
-import com.example.weatherguide.db.WeatherLocalDataSourceImpl
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
 import com.example.weatherguide.model.SharedFlowObject
 import com.example.weatherguide.model.WeatherRepositoryImpl
 import com.example.weatherguide.model.createCurrentDayWeatherHoursList
 import com.example.weatherguide.model.createWeatherAllDaysList
-import com.example.weatherguide.network.ApiState
-import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
 import com.example.weatherguide.utills.Constants
 import com.example.weatherguide.utills.Util
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 class HomeFragment : Fragment(), LocationListener {
     private lateinit var binding: FragmentHomeBinding
@@ -49,7 +51,15 @@ class HomeFragment : Fragment(), LocationListener {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var locationManager: MyLocationManager
     private val sharedFlow = MutableSharedFlow<SharedFlowObject>()
-
+    private lateinit var mListener: MainActivityListener
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mListener = try {
+            context as MainActivityListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must implement MainActivityListener")
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -160,8 +170,10 @@ class HomeFragment : Fragment(), LocationListener {
                         }
                         binding.weatherDescriptionTextView.text =
                             state.data.current.weather[0].description
+
+                        mListener.updateBackgroundAnimation("RAIN")
                         binding.temperatureTextView.text =
-                            "${convertKelvinToCelsius(state.data.current.temp)}°C"
+                            "${state.data.current.temp.toInt()}°C"
                         binding.dateTextView.text = getCurrentDateFormatted()
                     }
 
@@ -172,10 +184,6 @@ class HomeFragment : Fragment(), LocationListener {
             }
         }
 
-    }
-
-    private fun convertKelvinToCelsius(kelvin: Double): Int {
-        return (kelvin - 273.15).toInt()
     }
 
     private fun getCurrentDateFormatted(): String {

@@ -132,6 +132,38 @@ data class WeatherDescription(
 )
 
 
+
+data class WeatherHourItem(
+    val time: String,
+    val temperature: Int,
+    val weatherIconResource: String
+)data class WeatherDaysItem(
+    var dayName: String,
+    val weatherIconResource: String,
+    val weatherDescription: String,
+    val temperature: Int,
+)
+
+data class LocationSuggestions(
+    @SerializedName("features")
+    val features: List<Suggestions>
+)
+
+data class Suggestions(
+    @SerializedName("properties")
+    val properties: Properties
+)
+
+data class Properties(
+    @SerializedName("formatted")
+    val formatted: String,
+    @SerializedName("lon")
+    val lon: Double,
+    @SerializedName("lat")
+    val lat: Double,
+)
+
+
 fun getNameFromDate(unixTimestamp: Long,context: Context): String {
     val date = Date(unixTimestamp * 1000)
     var sharedPreferences =
@@ -155,7 +187,7 @@ fun createWeatherAllDaysList(context: Context,weatherDataList: List<DailyWeather
     weatherDataList.forEach { weatherData ->
         val dayName = getNameFromDate(weatherData.dt,context)
         if (!encounteredDays.contains(dayName)) {
-            val temperatureCelsius = convertKelvinToCelsius(weatherData.temp.day)
+
             val weatherIconResource = weatherData.weather.firstOrNull()?.icon ?: ""
             val weatherDescription = weatherData.weather.firstOrNull()?.description ?: ""
             weatherItemList.add(
@@ -163,7 +195,7 @@ fun createWeatherAllDaysList(context: Context,weatherDataList: List<DailyWeather
                     dayName,
                     weatherIconResource,
                     weatherDescription,
-                    temperatureCelsius
+                    weatherData.temp.day.toInt()
                 )
             )
             encounteredDays.add(dayName)
@@ -181,21 +213,11 @@ fun createCurrentDayWeatherHoursList(weatherDataList: List<HourlyWeather>): List
     return weatherDataList.filter { timestampToDateString(it.dt) == currentDateString }
         .mapNotNull { weatherData ->
             val time = timestampToTimeString(weatherData.dt)
-            val temperatureCelsius = convertKelvinToCelsius(weatherData.temp)
+
             val weatherIconResource = weatherData.weather.firstOrNull()?.icon ?: ""
-            WeatherHourItem(time, temperatureCelsius, weatherIconResource)
+            WeatherHourItem(time, weatherData.temp.toInt(), weatherIconResource)
         }
 }
-data class WeatherHourItem(
-    val time: String,
-    val temperature: Int,
-    val weatherIconResource: String
-)data class WeatherDaysItem(
-    var dayName: String,
-    val weatherIconResource: String,
-    val weatherDescription: String,
-    val temperature: Int,
-)
 fun timestampToDateString(timestamp: Long): String {
     val date = Date(timestamp * 1000)
     return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
@@ -204,26 +226,4 @@ fun timestampToDateString(timestamp: Long): String {
 fun timestampToTimeString(timestamp: Long): String {
     val date = Date(timestamp * 1000)
     return SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date)
-}
-data class LocationSuggestions(
-    @SerializedName("features")
-    val features: List<Suggestions>
-)
-
-data class Suggestions(
-    @SerializedName("properties")
-    val properties: Properties
-)
-
-data class Properties(
-    @SerializedName("formatted")
-    val formatted: String,
-    @SerializedName("lon")
-    val lon: Double,
-    @SerializedName("lat")
-    val lat: Double,
-)
-
-fun convertKelvinToCelsius(kelvin: Double): Int {
-    return (kelvin - 273.15).toInt()
 }

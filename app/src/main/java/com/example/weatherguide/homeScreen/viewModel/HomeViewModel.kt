@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weatherguide.model.SharedFlowObject
 
-import com.example.weatherguide.network.ApiState
-import com.example.weatherguide.network.ApiState.*
+import com.example.weatherguide.data.remote.ApiState
+import com.example.weatherguide.data.remote.ApiState.*
 import com.example.weatherguide.model.WeatherRepository
 import com.example.weatherguide.model.WeatherResponse
 import kotlinx.coroutines.Dispatchers
@@ -29,11 +29,11 @@ class HomeViewModel(
     init {
         viewModelScope.launch(Dispatchers.Main) {
             sharedFlow.collect {
-                getData(it)
+                getWeatherData(it)
             }
         }
     }
-    private fun getData(sharedFlowObject: SharedFlowObject) {
+     fun getWeatherData(sharedFlowObject: SharedFlowObject) {
         viewModelScope.launch {
             _weatherData.value = Loading
             iRepository.getWeatherData(sharedFlowObject).catch { e->

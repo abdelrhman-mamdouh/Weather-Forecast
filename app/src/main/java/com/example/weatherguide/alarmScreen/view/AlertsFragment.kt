@@ -22,12 +22,12 @@ import com.example.weatherguide.alarmScreen.broadcastReceiver.AlarmReceiver
 import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModel
 import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModelFactory
 import com.example.weatherguide.databinding.FragmentAlertsBinding
-import com.example.weatherguide.db.WeatherLocalDataSourceImpl
+import com.example.weatherguide.data.local.WeatherLocalDataSourceImpl
 import com.example.weatherguide.favoriteScreen.OnClickListener
-import com.example.weatherguide.network.ApiState
+import com.example.weatherguide.data.remote.ApiState
 import com.example.weatherguide.model.AlarmDate
 import com.example.weatherguide.model.WeatherRepositoryImpl
-import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat

@@ -1,12 +1,11 @@
-package com.example.weatherguide.db
+package com.example.weatherguide.data.local
 
 import android.content.Context
-import com.example.productsmvvm.db.WeatherDatabase
 import com.example.weatherguide.model.AlarmDate
 import com.example.weatherguide.model.FavoriteLocation
 import kotlinx.coroutines.flow.Flow
 
-class WeatherLocalDataSourceImpl(context: Context):WeatherLocalDataSource {
+class WeatherLocalDataSourceImpl(context: Context): WeatherLocalDataSource {
     private val daoFav: FavoriteLocationDAO by lazy {
         val db = WeatherDatabase.getInstance(context)
         db.weatherDAO()

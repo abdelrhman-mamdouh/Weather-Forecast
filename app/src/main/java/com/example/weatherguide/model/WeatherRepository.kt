@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 
 interface WeatherRepository {
-     fun  getWeatherData(sharedFlowObject: SharedFlowObject): Flow<WeatherResponse>
+     fun getWeatherData(sharedFlowObject: SharedFlowObject): Flow<WeatherResponse>
      fun getLocationSuggestions(query: String): Flow<List<Suggestions>>
 
      fun getAllFavoriteLocations(): Flow<List<FavoriteLocation>>

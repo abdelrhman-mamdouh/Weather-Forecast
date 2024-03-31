@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.weatherguide.databinding.FragmentSettingsBinding
 import java.util.Locale
@@ -148,23 +147,25 @@ class SettingsFragment : Fragment() {
             binding.themeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
                 when (checkedId) {
                     R.id.radioButtonLight -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        requireActivity().setTheme(R.style.Base_Theme_WeatherGuide_Light)
                         sharedPreferences.edit()
                             .putString("theme", requireContext().getString(R.string.light))
                             .apply()
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        requireActivity().recreate()
                     }
 
-                    R.id.radioButtonDark-> {
+                    R.id.radioButtonDark -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        requireActivity().setTheme(R.style.Base_Theme_WeatherGuide_Dark)
                         sharedPreferences.edit()
                             .putString("theme", requireContext().getString(R.string.dark))
                             .apply()
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        requireActivity().recreate()
                     }
                 }
             }
         }
-
-
     }
 
     private fun setAppLocale(language: String, country: String) {

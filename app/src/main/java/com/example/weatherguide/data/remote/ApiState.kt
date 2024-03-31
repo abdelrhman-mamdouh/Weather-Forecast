@@ -1,4 +1,4 @@
-package com.example.weatherguide.network
+package com.example.weatherguide.data.remote
 
 sealed class ApiState<out T> {
     object Loading : ApiState<Nothing>()

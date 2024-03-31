@@ -1,4 +1,4 @@
-package com.example.weatherguide.db
+package com.example.weatherguide.data.local
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -13,9 +13,6 @@ import kotlinx.coroutines.flow.Flow
 interface AlarmDAO {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun add(alarmDate: AlarmDate)
-
-    @Update
-    suspend fun update(alarmDate: AlarmDate)
 
     @Delete
     suspend fun remove(alarmDate: AlarmDate)

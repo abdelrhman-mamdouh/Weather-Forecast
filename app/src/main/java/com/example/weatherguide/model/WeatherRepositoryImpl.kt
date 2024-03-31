@@ -1,16 +1,19 @@
 package com.example.weatherguide.model
 
-import com.example.weatherguide.db.WeatherLocalDataSource
-import com.example.weatherguide.network.WeatherRemoteDataSource
+import com.example.weatherguide.data.local.WeatherLocalDataSource
+import com.example.weatherguide.data.remote.WeatherRemoteDataSource
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
-class WeatherRepositoryImpl private constructor(
+class WeatherRepositoryImpl  (
     private val weatherRemoteDataSource: WeatherRemoteDataSource,
-    private val weatherLocalDataSource: WeatherLocalDataSource
+    private val weatherLocalDataSource: WeatherLocalDataSource,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WeatherRepository {
 
     companion object {
-        private var repository: WeatherRepository? = null
+         var repository: WeatherRepository? = null
 
         fun getInstance(
             weatherRemoteDataSource: WeatherRemoteDataSource,

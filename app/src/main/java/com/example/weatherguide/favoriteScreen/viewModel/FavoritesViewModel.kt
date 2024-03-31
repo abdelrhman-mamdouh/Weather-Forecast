@@ -2,7 +2,7 @@ package com.example.weatherguide.favoriteScreen.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherguide.network.ApiState
+import com.example.weatherguide.data.remote.ApiState
 import com.example.weatherguide.model.FavoriteLocation
 import com.example.weatherguide.model.WeatherRepository
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +21,9 @@ class FavoritesViewModel(private val iRepository: WeatherRepository) : ViewModel
     init {
         getFavoriteLocations()
     }
-    fun removeLocation(product: FavoriteLocation) {
+    fun removeLocation(favoriteLocation: FavoriteLocation) {
         viewModelScope.launch(Dispatchers.IO) {
-            iRepository.delete(product)
+            iRepository.delete(favoriteLocation)
 
         }
     }

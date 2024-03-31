@@ -2,7 +2,7 @@ package com.example.weatherguide.alarmScreen.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weatherguide.network.ApiState
+import com.example.weatherguide.data.remote.ApiState
 import com.example.weatherguide.model.AlarmDate
 import com.example.weatherguide.model.WeatherRepository
 import kotlinx.coroutines.Dispatchers

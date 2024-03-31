@@ -16,14 +16,13 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
 import com.example.weatherguide.MainActivity
 import com.example.weatherguide.R
 import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModel
 import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModelFactory
-import com.example.weatherguide.db.WeatherLocalDataSourceImpl
+import com.example.weatherguide.data.local.WeatherLocalDataSourceImpl
 import com.example.weatherguide.model.WeatherRepositoryImpl
-import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
 
 class AlertWindowService : Service() {
     private lateinit var windowManager: WindowManager

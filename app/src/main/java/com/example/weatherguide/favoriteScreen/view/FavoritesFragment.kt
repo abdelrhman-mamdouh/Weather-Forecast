@@ -10,20 +10,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherguide.R
 import com.example.weatherguide.databinding.FragmentFavoritesBinding
-import com.example.weatherguide.db.WeatherLocalDataSourceImpl
+import com.example.weatherguide.data.local.WeatherLocalDataSourceImpl
 import com.example.weatherguide.favoriteScreen.OnClickListener
 import com.example.weatherguide.favoriteScreen.viewModel.FavoritesViewModel
 import com.example.weatherguide.favoriteScreen.viewModel.FavoritesViewModelFactory
-import com.example.weatherguide.network.ApiState
+import com.example.weatherguide.data.remote.ApiState
 import com.example.weatherguide.mapScreen.view.MapActivity
 import com.example.weatherguide.model.FavoriteLocation
 import com.example.weatherguide.model.WeatherRepositoryImpl
-import com.example.weatherguide.network.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
 import kotlinx.coroutines.launch
 
 

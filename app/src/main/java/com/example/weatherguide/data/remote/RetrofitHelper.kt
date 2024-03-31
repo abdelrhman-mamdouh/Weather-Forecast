@@ -1,4 +1,4 @@
-package com.example.weatherguide.network
+package com.example.weatherguide.data.remote
 
 import com.example.weatherguide.utills.Constants
 import retrofit2.Retrofit
