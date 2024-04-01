@@ -24,6 +24,7 @@ import com.example.weatherguide.favoriteScreen.viewModel.FavoritesViewModelFacto
 import com.example.weatherguide.mapScreen.view.MapActivity
 import com.example.weatherguide.model.FavoriteLocation
 import com.example.weatherguide.model.WeatherRepositoryImpl
+import com.example.weatherguide.utills.Util
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
@@ -68,16 +69,22 @@ class FavoritesFragment : Fragment(), OnClickListener<FavoriteLocation> {
                 when (state) {
                     is ApiState.Loading -> {
                         binding.favoritesRecyclerView.visibility = View.GONE
+                        binding.favAnimation.visibility = View.VISIBLE // Show the animation view
                         showLoading(true)
                     }
 
                     is ApiState.Success -> {
                         showLoading(false)
-                        binding.favoritesRecyclerView.visibility = View.VISIBLE
-                        Log.i("TAG", "onViewCreated: ${state.data}")
-                        showData(state.data)
+                        if (state.data.isEmpty()) {
+                            binding.favoritesRecyclerView.visibility = View.GONE
+                            binding.favAnimation.visibility = View.VISIBLE
+                        } else {
+                            binding.favoritesRecyclerView.visibility = View.VISIBLE
+                            binding.favAnimation.visibility = View.GONE
+                            Log.i("TAG", "onViewCreated: ${state.data}")
+                            showData(state.data)
+                        }
                     }
-
                     else -> {
                         showLoading(false)
                     }
@@ -85,22 +92,24 @@ class FavoritesFragment : Fragment(), OnClickListener<FavoriteLocation> {
             }
         }
         binding.fabAddFavoriteLocation.setOnClickListener {
-            val intent = Intent(requireContext(), MapActivity::class.java)
-            startActivity(intent)
+            if (Util.isNetworkAvailable(requireContext())) {
+                val intent = Intent(requireContext(), MapActivity::class.java)
+                startActivity(intent)
+            } else {
+                Snackbar.make(binding.root,
+                    getString(R.string.no_network_connection), Snackbar.LENGTH_LONG).show()
+            }
         }
     }
-
     private fun showData(favoriteLocation: List<FavoriteLocation>) {
         adapter.apply {
             setList(favoriteLocation)
             notifyDataSetChanged()
         }
     }
-
     private fun showLoading(isLoading: Boolean) {
         binding.loader.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
-
 
     override fun onClickRemove(favoriteLocation: FavoriteLocation) {
         val confirmationDialog = AlertDialog.Builder(requireContext())

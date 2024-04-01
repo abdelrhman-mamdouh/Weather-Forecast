@@ -104,4 +104,5 @@
     <string name="allow_location_permissions">You need to allow location permissions for the app to get weather data.</string>
     <string name="allow">Allow</string>
     <string name="appear_on_top_permission">You need to allow appear on top permission to display over other apps</string>
+    <string name="no_network_connection">No network connection</string>
 </resources>

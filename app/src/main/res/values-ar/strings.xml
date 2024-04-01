@@ -97,5 +97,6 @@
     <string name="allow_location_permissions">تحتاج إلى السماح لأذونات الموقع للتطبيق بالحصول على بيانات الطقس.</string>
     <string name="allow">سماح</string>
     <string name="appear_on_top_permission">تحتاج إلى السماح بالظهور في الأعلى إذنًا للعرض على التطبيقات الأخرى</string>
+    <string name="no_network_connection">No network connection</string>
 
 </resources>

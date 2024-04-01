@@ -30,16 +30,18 @@ import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
 import com.example.weatherguide.model.SharedFlowObject
 import com.example.weatherguide.model.WeatherRepositoryImpl
+import com.example.weatherguide.model.WeatherResponse
 
 import com.example.weatherguide.utills.Constants
 import com.example.weatherguide.utills.Util
+import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-
 
 class HomeFragment : Fragment(), LocationListener {
     private lateinit var binding: FragmentHomeBinding
@@ -59,7 +61,6 @@ class HomeFragment : Fragment(), LocationListener {
             throw ClassCastException("$context must implement MainActivityListener")
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,7 +69,6 @@ class HomeFragment : Fragment(), LocationListener {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -103,7 +103,6 @@ class HomeFragment : Fragment(), LocationListener {
                 locationManager.enableLocationServices()
             }
         } else {
-
             AlertDialog.Builder(requireContext())
                 .setMessage(getString(R.string.allow_location_permissions))
                 .setPositiveButton(getString(R.string.allow)) { dialog, which ->
@@ -121,12 +120,10 @@ class HomeFragment : Fragment(), LocationListener {
                 }
                 .show()
         }
-
         binding.swipeRefreshLayout.setOnRefreshListener {
             reloadFragment()
         }
     }
-
     private fun getCurrentWeatherData() {
         lifecycleScope.launch(Dispatchers.Main) {
             homeViewModel.weatherData.collect { state ->
@@ -136,67 +133,30 @@ class HomeFragment : Fragment(), LocationListener {
                         binding.swipeDown.visibility = View.GONE
                     }
                     is ApiState.Success -> {
-                        showLoading(false)
-                        binding.swipeDown.visibility = View.GONE
-                        binding.myLayout.visibility = View.VISIBLE
-                        val weatherHoursList = Util.createCurrentDayWeatherHoursList(state.data.hourly)
-                        val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
-                        binding.hoursRecyclerView.adapter = hoursAdapter
-                        hoursAdapter.notifyDataSetChanged()
-                        val weatherDaysList =
-                            Util.createWeatherAllDaysList(requireContext(), state.data.daily)
-                        val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
-                        binding.daysRecyclerView.adapter = daysAdapter
-                        daysAdapter.notifyDataSetChanged()
-                        binding.locationTextView.text = "${state.data.timezone}"
-                        binding.pressureTextView.text = "${state.data.current.pressure} hPa"
-                        binding.seaLevelTextView.text = "${state.data.current.uvi} hPa"
-                        binding.humidityTextView.text = "${state.data.current.humidity}%"
-                        binding.cloudTextView.text = "${state.data.current.clouds} %"
-                        binding.visibilityTextView.text = "${state.data.current.visibility} m"
-                        if (state.data.current.weather[0].icon.equals("01d")) {
-                            binding.weatherIconImageView.setImageResource(R.drawable.sunny)
-                        } else if (state.data.current.weather[0].icon.equals("01n")) {
-                            binding.weatherIconImageView.setImageResource(R.drawable.ic_night)
-                        } else {
-                            Glide.with(requireContext())
-                                .load("https://openweathermap.org/img/wn/${state.data.current.weather[0].icon}@4x.png")
-                                .apply(RequestOptions().override(450, 350))
-                                .placeholder(R.drawable.sunny)
-                                .into(binding.weatherIconImageView)
-                        }
-                        binding.weatherDescriptionTextView.text =
-                            state.data.current.weather[0].description
-                        var myObject = Util.getSharedFlowObject(requireContext())
-                        val temperature = state.data.current.temp.toInt()
-                        val windSpeed = state.data.current.windSpeed
-                        binding.temperatureTextView.text = when (myObject.temp) {
-                            "Celsius" -> "$temperature°C"
-                            "Fahrenheit" -> "$temperature°F"
-                            else -> "$temperature°K"
-                        }
-                        binding.windTextView.text = when (myObject.temp) {
-                            "Celsius" -> "$windSpeed ${getString(R.string.meter_Sec)}"
-                            "Fahrenheit" -> "$windSpeed ${getString(R.string.mile_Hour)}"
-                            else -> "$windSpeed ${getString(R.string.meter_sec)}"
-                        }
-                        if (state.data.current.weather[0].description.contains("rain"))
-                            mListener.updateBackgroundAnimation("RAIN")
-                        else if (state.data.current.weather[0].description.contains("snow")) {
-                            mListener.updateBackgroundAnimation("SNOW")
-                        } else {
-                            mListener.updateBackgroundAnimation("CLEAR")
-                        }
-                        binding.dateTextView.text = getCurrentDateFormatted()
+                        cacheWeatherData(state.data)
+                        showWeatherData(state.data)
                     }
                     else -> {
-                        showLoading(false)
+
+                        val cachedWeatherData = getCachedWeatherData()
+                        if (cachedWeatherData != null) {       // Show UI with cached weather data
+                            showWeatherData(cachedWeatherData)
+                        } else {
+
+                            showLoading(false)
+
+                            Snackbar.make(
+                                binding.root,
+                                "No network connection and no cached data available",
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
                     }
                 }
             }
         }
-
     }
+
 
     private fun getCurrentDateFormatted(): String {
         val calendar = Calendar.getInstance()
@@ -248,6 +208,77 @@ class HomeFragment : Fragment(), LocationListener {
         activity?.finish()
         startActivity(intent!!)
         binding.swipeRefreshLayout.isRefreshing = false
+    }
+
+    private fun cacheWeatherData(weatherResponse: WeatherResponse) {
+        val sharedPreferences =
+            requireContext().getSharedPreferences("WeatherCache", Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = gson.toJson(weatherResponse)
+        sharedPreferences.edit().putString("cachedWeatherData", json).apply()
+    }
+
+    private fun getCachedWeatherData(): WeatherResponse? {
+        val sharedPreferences =
+            requireContext().getSharedPreferences("WeatherCache", Context.MODE_PRIVATE)
+        val json = sharedPreferences.getString("cachedWeatherData", null)
+        val gson = Gson()
+        return gson.fromJson(json, WeatherResponse::class.java)
+    }
+
+    private fun showWeatherData(weatherResponse: WeatherResponse) {
+        showLoading(false)
+        binding.swipeDown.visibility = View.GONE
+        binding.myLayout.visibility = View.VISIBLE
+        val weatherHoursList = Util.createCurrentDayWeatherHoursList(weatherResponse.hourly)
+        val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
+        binding.hoursRecyclerView.adapter = hoursAdapter
+        hoursAdapter.notifyDataSetChanged()
+        val weatherDaysList =
+            Util.createWeatherAllDaysList(requireContext(), weatherResponse.daily)
+        val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
+        binding.daysRecyclerView.adapter = daysAdapter
+        daysAdapter.notifyDataSetChanged()
+        binding.locationTextView.text = "${weatherResponse.timezone}"
+        binding.pressureTextView.text = "${weatherResponse.current.pressure} hPa"
+        binding.seaLevelTextView.text = "${weatherResponse.current.uvi} hPa"
+        binding.humidityTextView.text = "${weatherResponse.current.humidity}%"
+        binding.cloudTextView.text = "${weatherResponse.current.clouds} %"
+        binding.visibilityTextView.text = "${weatherResponse.current.visibility} m"
+        if (weatherResponse.current.weather[0].icon.equals("01d")) {
+            binding.weatherIconImageView.setImageResource(R.drawable.sunny)
+        } else if (weatherResponse.current.weather[0].icon.equals("01n")) {
+            binding.weatherIconImageView.setImageResource(R.drawable.ic_night)
+        } else {
+            Glide.with(requireContext())
+                .load("https://openweathermap.org/img/wn/${weatherResponse.current.weather[0].icon}@4x.png")
+                .apply(RequestOptions().override(450, 350))
+                .placeholder(R.drawable.sunny)
+                .into(binding.weatherIconImageView)
+        }
+        binding.weatherDescriptionTextView.text =
+            weatherResponse.current.weather[0].description
+        var myObject = Util.getSharedFlowObject(requireContext())
+        val temperature = weatherResponse.current.temp.toInt()
+        val windSpeed = weatherResponse.current.windSpeed
+        binding.temperatureTextView.text = when (myObject.temp) {
+            "Celsius" -> "$temperature°C"
+            "Fahrenheit" -> "$temperature°F"
+            else -> "$temperature°K"
+        }
+        binding.windTextView.text = when (myObject.temp) {
+            "Celsius" -> "$windSpeed ${getString(R.string.meter_Sec)}"
+            "Fahrenheit" -> "$windSpeed ${getString(R.string.mile_Hour)}"
+            else -> "$windSpeed ${getString(R.string.meter_sec)}"
+        }
+        if (weatherResponse.current.weather[0].description.contains("rain"))
+            mListener.updateBackgroundAnimation("RAIN")
+        else if (weatherResponse.current.weather[0].description.contains("snow")) {
+            mListener.updateBackgroundAnimation("SNOW")
+        } else {
+            mListener.updateBackgroundAnimation("CLEAR")
+        }
+        binding.dateTextView.text = getCurrentDateFormatted()
     }
 }
 

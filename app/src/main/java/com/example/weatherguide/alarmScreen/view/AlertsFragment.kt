@@ -32,6 +32,7 @@ import com.example.weatherguide.favoriteScreen.OnClickListener
 import com.example.weatherguide.model.AlarmDate
 import com.example.weatherguide.model.WeatherRepositoryImpl
 import com.example.weatherguide.utills.Constants.PERMISSION_REQUEST_CODE
+import com.example.weatherguide.utills.Util
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -75,53 +76,67 @@ class AlertsFragment : Fragment(), OnClickListener<AlarmDate> {
                 when (state) {
                     is ApiState.Loading -> {
                         binding.alarmRecyclerView.visibility = View.GONE
+                        binding.alarm.visibility = View.VISIBLE // Show the animation view
                         showLoading(true)
                     }
 
                     is ApiState.Success -> {
                         showLoading(false)
-                        binding.alarmRecyclerView.visibility = View.VISIBLE
-                        alarms = state.data
-                        showData(state.data)
+                        if (state.data.isEmpty()) {
+                            binding.alarmRecyclerView.visibility = View.GONE
+                            binding.alarm.visibility = View.VISIBLE
+                        } else {
+                            binding.alarmRecyclerView.visibility = View.VISIBLE
+                            binding.alarm.visibility = View.GONE
+                            alarms = state.data
+                            showData(state.data)
+                        }
                     }
-
                     else -> {
                         showLoading(false)
                     }
                 }
             }
         }
-        binding.fabAddAlarm.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    val notificationManager =
-                        requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                    if (notificationManager.areNotificationsEnabled()) {
-                        showDatePickerDialog()
-                    } else {
-                        if (!Settings.canDrawOverlays(requireContext())) {
-                            AlertDialog.Builder(requireContext())
-                                .setMessage(R.string.appear_on_top_permission)
-                                .setPositiveButton("Yes") { _, _ ->
-                                    val intent = Intent(
-                                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                        Uri.parse("package:${requireContext().packageName}")
-                                    )
-                                    startActivityForResult(intent, PERMISSION_REQUEST_CODE)
-                                }
-                                .setNegativeButton("No") { _, _ ->
 
-                                }
-                                .show()
-                        } else {
+        binding.fabAddAlarm.setOnClickListener {
+            if (Util.isNetworkAvailable(requireContext())) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        val notificationManager =
+                            requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        if (notificationManager.areNotificationsEnabled()) {
                             showDatePickerDialog()
+                        } else {
+                            if (!Settings.canDrawOverlays(requireContext())) {
+                                AlertDialog.Builder(requireContext())
+                                    .setMessage(R.string.appear_on_top_permission)
+                                    .setPositiveButton("Yes") { _, _ ->
+                                        val intent = Intent(
+                                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                            Uri.parse("package:${requireContext().packageName}")
+                                        )
+                                        startActivityForResult(intent, PERMISSION_REQUEST_CODE)
+                                    }
+                                    .setNegativeButton("No") { _, _ ->
+
+                                    }
+                                    .show()
+                            } else {
+                                showDatePickerDialog()
+                            }
                         }
+                    } else {
+                        showDatePickerDialog()
                     }
                 } else {
                     showDatePickerDialog()
                 }
             } else {
-                showDatePickerDialog()
+                Snackbar.make(
+                    binding.root,
+                    getString(R.string.no_network_connection), Snackbar.LENGTH_LONG
+                ).show()
             }
         }
     }
@@ -152,7 +167,11 @@ class AlertsFragment : Fragment(), OnClickListener<AlarmDate> {
                     scheduleAlarm(selectedDate, selectedTime)
                 } else {
                     val rootView = requireActivity().findViewById<View>(android.R.id.content)
-                    Snackbar.make(rootView, "Please select a future time.", Snackbar.LENGTH_SHORT)
+                    Snackbar.make(
+                        rootView,
+                        "Please select a future time.",
+                        Snackbar.LENGTH_SHORT
+                    )
                         .show()
                 }
             }, currentTime.get(Calendar.HOUR_OF_DAY), currentTime.get(Calendar.MINUTE), false
@@ -202,7 +221,8 @@ class AlertsFragment : Fragment(), OnClickListener<AlarmDate> {
             )
         }
 
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager =
+            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val alarmType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             AlarmManager.RTC_WAKEUP
@@ -249,7 +269,8 @@ class AlertsFragment : Fragment(), OnClickListener<AlarmDate> {
                 alarmViewModel.removeAlarm(item)
                 cancelAlarm(item)
                 view?.let {
-                    Snackbar.make(it, "Alarms removed successfully", Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(it, "Alarms removed successfully", Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
             .setNegativeButton(getString(R.string.cancel), null)
@@ -267,7 +288,8 @@ class AlertsFragment : Fragment(), OnClickListener<AlarmDate> {
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
-        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmManager =
+            requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(pendingIntent)
     }
 

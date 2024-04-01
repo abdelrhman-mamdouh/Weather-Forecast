@@ -3,6 +3,7 @@ package com.example.weatherguide.utills
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -149,6 +150,11 @@ class Util {
             val config = Configuration()
             config.locale = locale
             activity.resources.updateConfiguration(config, activity.resources.displayMetrics)
+        }
+        fun isNetworkAvailable(context: Context): Boolean {
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val networkInfo = connectivityManager.activeNetworkInfo
+            return networkInfo != null && networkInfo.isConnected
         }
     }
 }

@@ -37,4 +37,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/white" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/alarm"
+        android:layout_width="@dimen/_250sdp"
+        android:layout_height="@dimen/_250sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/alarm_animation" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
