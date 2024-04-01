@@ -16,7 +16,6 @@ class WeatherLocalDataSourceImpl(context: Context): WeatherLocalDataSource {
         db.alarmDAO()
     }
 
-
     override fun getFavoriteLocations(): Flow<List<FavoriteLocation>> {
         return daoFav.getAllFavoriteLocations()
     }

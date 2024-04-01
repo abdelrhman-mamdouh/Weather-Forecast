@@ -5,8 +5,8 @@ import androidx.room.PrimaryKey
 import java.io.Serializable
 
 @Entity(tableName = "alarm_table")
-data class AlarmDate (
+data class AlarmDate(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val dateTime:String
-): Serializable
+    val dateTime: String
+) : Serializable

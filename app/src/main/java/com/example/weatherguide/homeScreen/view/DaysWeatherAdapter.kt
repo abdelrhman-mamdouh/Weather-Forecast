@@ -9,6 +9,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.weatherguide.R
 import com.example.weatherguide.databinding.ItemDayLayoutBinding
 import com.example.weatherguide.model.WeatherDaysItem
+import com.example.weatherguide.utills.Util
 
 
 class DaysWeatherAdapter(
@@ -28,7 +29,17 @@ class DaysWeatherAdapter(
     override fun onBindViewHolder(holder: DaysViewHolder, position: Int) {
         val weatherItem = weatherList[position]
         holder.binding.dayTextView.text = weatherItem.dayName
-        holder.binding.tempTextView.text = "${weatherItem.temperature}°C"
+
+        val myObject = Util.getSharedFlowObject(context)
+        val temperature = weatherItem.temperature
+        val temperatureText = when (myObject.temp) {
+            "Celsius" -> "$temperature°C"
+            "Kelvin" -> "$temperature°K"
+            "Fahrenheit" -> "$temperature°F"
+            else -> "$temperature"
+        }
+
+        holder.binding.tempTextView.text = temperatureText
         if (weatherItem.weatherIconResource == "01d") {
             holder.binding.weatherIconImageView.setImageResource(R.drawable.sunny)
         } else if (weatherItem.weatherIconResource == "01n") {

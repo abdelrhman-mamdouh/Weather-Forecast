@@ -30,8 +30,7 @@ import com.example.weatherguide.homeScreen.viewModel.HomeViewModel
 import com.example.weatherguide.homeScreen.viewModel.HomeViewModelFactory
 import com.example.weatherguide.model.SharedFlowObject
 import com.example.weatherguide.model.WeatherRepositoryImpl
-import com.example.weatherguide.model.createCurrentDayWeatherHoursList
-import com.example.weatherguide.model.createWeatherAllDaysList
+
 import com.example.weatherguide.utills.Constants
 import com.example.weatherguide.utills.Util
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +59,7 @@ class HomeFragment : Fragment(), LocationListener {
             throw ClassCastException("$context must implement MainActivityListener")
         }
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -105,8 +105,8 @@ class HomeFragment : Fragment(), LocationListener {
         } else {
 
             AlertDialog.Builder(requireContext())
-                .setMessage("You need to allow location permissions for the app to get weather data.")
-                .setPositiveButton("Allow") { dialog, which ->
+                .setMessage(getString(R.string.allow_location_permissions))
+                .setPositiveButton(getString(R.string.allow)) { dialog, which ->
                     ActivityCompat.requestPermissions(
                         requireActivity(),
                         arrayOf(
@@ -135,18 +135,16 @@ class HomeFragment : Fragment(), LocationListener {
                         showLoading(true)
                         binding.swipeDown.visibility = View.GONE
                     }
-
                     is ApiState.Success -> {
-
                         showLoading(false)
                         binding.swipeDown.visibility = View.GONE
                         binding.myLayout.visibility = View.VISIBLE
-                        val weatherHoursList = createCurrentDayWeatherHoursList(state.data.hourly)
+                        val weatherHoursList = Util.createCurrentDayWeatherHoursList(state.data.hourly)
                         val hoursAdapter = HoursWeatherAdapter(requireContext(), weatherHoursList)
                         binding.hoursRecyclerView.adapter = hoursAdapter
                         hoursAdapter.notifyDataSetChanged()
-
-                        val weatherDaysList = createWeatherAllDaysList(requireContext(),state.data.daily)
+                        val weatherDaysList =
+                            Util.createWeatherAllDaysList(requireContext(), state.data.daily)
                         val daysAdapter = DaysWeatherAdapter(requireContext(), weatherDaysList)
                         binding.daysRecyclerView.adapter = daysAdapter
                         daysAdapter.notifyDataSetChanged()
@@ -154,7 +152,6 @@ class HomeFragment : Fragment(), LocationListener {
                         binding.pressureTextView.text = "${state.data.current.pressure} hPa"
                         binding.seaLevelTextView.text = "${state.data.current.uvi} hPa"
                         binding.humidityTextView.text = "${state.data.current.humidity}%"
-                        binding.windTextView.text = "${state.data.current.windSpeed} m/s"
                         binding.cloudTextView.text = "${state.data.current.clouds} %"
                         binding.visibilityTextView.text = "${state.data.current.visibility} m"
                         if (state.data.current.weather[0].icon.equals("01d")) {
@@ -170,13 +167,28 @@ class HomeFragment : Fragment(), LocationListener {
                         }
                         binding.weatherDescriptionTextView.text =
                             state.data.current.weather[0].description
-
-                        mListener.updateBackgroundAnimation("RAIN")
-                        binding.temperatureTextView.text =
-                            "${state.data.current.temp.toInt()}°C"
+                        var myObject = Util.getSharedFlowObject(requireContext())
+                        val temperature = state.data.current.temp.toInt()
+                        val windSpeed = state.data.current.windSpeed
+                        binding.temperatureTextView.text = when (myObject.temp) {
+                            "Celsius" -> "$temperature°C"
+                            "Fahrenheit" -> "$temperature°F"
+                            else -> "$temperature°K"
+                        }
+                        binding.windTextView.text = when (myObject.temp) {
+                            "Celsius" -> "$windSpeed ${getString(R.string.meter_Sec)}"
+                            "Fahrenheit" -> "$windSpeed ${getString(R.string.mile_Hour)}"
+                            else -> "$windSpeed ${getString(R.string.meter_sec)}"
+                        }
+                        if (state.data.current.weather[0].description.contains("rain"))
+                            mListener.updateBackgroundAnimation("RAIN")
+                        else if (state.data.current.weather[0].description.contains("snow")) {
+                            mListener.updateBackgroundAnimation("SNOW")
+                        } else {
+                            mListener.updateBackgroundAnimation("CLEAR")
+                        }
                         binding.dateTextView.text = getCurrentDateFormatted()
                     }
-
                     else -> {
                         showLoading(false)
                     }
@@ -212,12 +224,10 @@ class HomeFragment : Fragment(), LocationListener {
     private fun onLocationSourceSelected() {
         sharedPreferences =
             requireActivity().getSharedPreferences("MySettings", Context.MODE_PRIVATE)
-        val selectedOption = sharedPreferences.getString("location", null)
-        when (selectedOption) {
+        when (sharedPreferences.getString("location", "")) {
             requireContext().resources.getString(R.string.map) -> {
-
-               var myObject = Util.getSharedFlowObject(requireContext())
-                lifecycleScope.launch(Dispatchers.Main){
+                var myObject = Util.getSharedFlowObject(requireContext())
+                lifecycleScope.launch(Dispatchers.Main) {
                     sharedFlow.emit(myObject)
                 }
             }

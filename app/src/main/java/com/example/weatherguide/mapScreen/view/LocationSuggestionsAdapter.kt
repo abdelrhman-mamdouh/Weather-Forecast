@@ -14,11 +14,15 @@ import com.example.weatherguide.mapScreen.OnItemLocationClickListener
 import com.example.weatherguide.model.Suggestions
 
 
-class LocationSuggestionsAdapter(var listener: OnItemLocationClickListener) : ListAdapter<Suggestions, LocationSuggestionsAdapter.LocationSuggestionsViewHolder>(
-    LocationSuggestionsDiffCallback()
-){
-    private lateinit var sharedPreferences: SharedPreferences
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationSuggestionsViewHolder {
+class LocationSuggestionsAdapter(var listener: OnItemLocationClickListener) :
+    ListAdapter<Suggestions, LocationSuggestionsAdapter.LocationSuggestionsViewHolder>(
+        LocationSuggestionsDiffCallback()
+    ) {
+
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): LocationSuggestionsViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val itemView = inflater.inflate(R.layout.item_location_suggestion, parent, false)
         return LocationSuggestionsViewHolder(itemView)
@@ -38,7 +42,7 @@ class LocationSuggestionsAdapter(var listener: OnItemLocationClickListener) : Li
             itemLayout.setOnClickListener {
                 val latitude = locationSuggestions.properties.lat
                 val longitude = locationSuggestions.properties.lon
-                listener.onClick(latitude,longitude,locationSuggestions.properties.formatted)
+                listener.onClick(latitude, longitude, locationSuggestions.properties.formatted)
             }
         }
     }

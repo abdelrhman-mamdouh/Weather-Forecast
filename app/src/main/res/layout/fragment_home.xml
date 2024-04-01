@@ -5,6 +5,7 @@
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:paddingBottom="@dimen/_16sdp">
 
     <ScrollView
@@ -30,7 +31,7 @@
                     android:layout_height="@dimen/_200sdp"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:background="@drawable/background_three"
+                    android:background="@drawable/background_four"
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="@dimen/_8sdp"
@@ -131,36 +132,53 @@
                 </LinearLayout>
 
 
-                <View
-                    android:id="@+id/divider"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_2sdp"
-                    android:layout_margin="@dimen/_16sdp"
-                    android:background="?android:attr/listDivider"
+                <LinearLayout
+                    android:id="@+id/backgroundDaily"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_26sdp"
+                    android:background="@drawable/background_two"
+                    android:orientation="vertical"
+                    app:cardCornerRadius="@dimen/_16sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/background" />
+                    app:layout_constraintTop_toBottomOf="@+id/background">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/daysRecyclerView"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:padding="@dimen/_16sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+                    <TextView
+
+                        android:id="@+id/textViewDaily"
+                        style="@style/TextViewStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_16sdp"
+                        android:layout_margin="@dimen/_16sdp"
+                        android:text="@string/daily_forecast"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_14ssp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/daysRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/divider" />
+                </LinearLayout>
 
                 <androidx.gridlayout.widget.GridLayout
                     android:id="@+id/gridLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_16sdp"
-                    android:background="@drawable/background_three"
+                    android:background="@drawable/background_two"
                     android:padding="@dimen/_8sdp"
                     app:columnCount="3"
-                    app:layout_constraintEnd_toEndOf="@+id/daysRecyclerView"
-                    app:layout_constraintStart_toStartOf="@+id/daysRecyclerView"
-                    app:layout_constraintTop_toBottomOf="@+id/daysRecyclerView"
+                    app:layout_constraintEnd_toEndOf="@+id/backgroundDaily"
+                    app:layout_constraintStart_toStartOf="@+id/backgroundDaily"
+                    app:layout_constraintTop_toBottomOf="@+id/backgroundDaily"
                     app:rowCount="2">
 
                     <LinearLayout
@@ -266,7 +284,7 @@
                             android:layout_width="@dimen/_40sdp"
                             android:layout_height="@dimen/_40sdp"
                             android:layout_gravity="center_horizontal"
-                            android:background="@drawable/background_three"
+                            android:background="@drawable/background_two"
                             android:src="@drawable/windy" />
 
                         <TextView
@@ -413,6 +431,7 @@
                     </LinearLayout>
                 </androidx.gridlayout.widget.GridLayout>
 
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.airbnb.lottie.LottieAnimationView
@@ -421,22 +440,20 @@
                 android:layout_height="@dimen/_240sdp"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentTop="true"
                 app:lottie_rawRes="@raw/loader" />
 
-        <com.airbnb.lottie.LottieAnimationView
+            <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/swipeDown"
-                android:layout_width="@dimen/_200sdp"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_160sdp"
+                android:layout_height="@dimen/_160sdp"
+                android:paddingLeft="@dimen/_16sdp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/background_four"
+                android:layout_marginTop="@dimen/_250sdp"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
-
-            android:layout_centerHorizontal="true"
-            android:paddingTop="@dimen/_80sdp"
-            android:paddingLeft="@dimen/_40sdp"
-                android:scaleType="fitCenter"
                 app:lottie_rawRes="@raw/swipe" />
         </RelativeLayout>
+
     </ScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

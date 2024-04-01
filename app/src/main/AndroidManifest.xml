@@ -48,6 +48,9 @@
         <receiver android:name=".alarmScreen.broadcastReceiver.AlarmReceiver"
             android:exported="true">
         </receiver>
+        <receiver android:name=".NetworkChangeReceiver"
+            android:exported="true">
+        </receiver>
         <service android:name=".alarmScreen.service.AlertWindowService"
             android:foregroundServiceType="shortService"/>
     </application>

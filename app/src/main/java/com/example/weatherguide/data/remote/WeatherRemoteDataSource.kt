@@ -8,6 +8,6 @@ import com.example.weatherguide.model.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRemoteDataSource {
-    fun getWeatherData(sharedFlowObject: SharedFlowObject):Flow<WeatherResponse>
+    fun getWeatherData(sharedFlowObject: SharedFlowObject): Flow<WeatherResponse>
     fun getLocationsSuggestions(query: String): Flow<List<Suggestions>>
 }

@@ -9,7 +9,6 @@ import com.example.weatherguide.R
 import com.example.weatherguide.databinding.FavoritesLocationItemBinding
 import com.example.weatherguide.favoriteScreen.OnClickListener
 import com.example.weatherguide.model.FavoriteLocation
-import com.google.android.material.snackbar.Snackbar
 
 class FavoriteLocationAdapter(
     private var favoriteLocation: List<FavoriteLocation>,
@@ -35,16 +34,13 @@ class FavoriteLocationAdapter(
         val currentLocation = favoriteLocation[position]
         holder.binding.location = currentLocation
 
-        holder.binding.locationTextView.text=currentLocation.locationName
+        holder.binding.locationTextView.text = currentLocation.locationName
         holder.binding.removeButton.setOnClickListener {
             listener.onClickRemove(currentLocation)
-         Snackbar.make(holder.itemView,"Location removed from favorites",Snackbar.LENGTH_SHORT).show()
         }
-
         holder.binding.locationFavView.setOnClickListener {
             listener.onClickLocationFavorite(currentLocation)
         }
-
     }
 
     override fun getItemCount(): Int {

@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.weatherguide.R
-import com.example.weatherguide.databinding.ItemDayLayoutBinding
 import com.example.weatherguide.databinding.ItemHourLayoutBinding
 import com.example.weatherguide.model.WeatherHourItem
+import com.example.weatherguide.utills.Util
 
 
 class HoursWeatherAdapter(
@@ -18,7 +18,9 @@ class HoursWeatherAdapter(
 ) :
     RecyclerView.Adapter<HoursWeatherAdapter.HoursViewHolder>() {
 
-    data class HoursViewHolder(val binding: ItemHourLayoutBinding) : RecyclerView.ViewHolder(binding.root)
+    data class HoursViewHolder(val binding: ItemHourLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HoursViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemHourLayoutBinding.inflate(inflater, parent, false)
@@ -28,9 +30,17 @@ class HoursWeatherAdapter(
     override fun onBindViewHolder(holder: HoursViewHolder, position: Int) {
         val weatherItem = weatherList[position]
         val binding = holder.binding
-
+        val myObject = Util.getSharedFlowObject(context)
+        val temperature = weatherItem.temperature
+        val temperatureText = when (myObject.temp) {
+            "Celsius" -> "$temperature°C"
+            "Kelvin" -> "$temperature°K"
+            "Fahrenheit" -> "$temperature°F"
+            else -> "$temperature"
+        }
+        binding.tempTextView.text = temperatureText
         binding.hourTextView.text = weatherItem.time
-        binding.tempTextView.text = "${weatherItem.temperature}°C"
+
         if (weatherItem.weatherIconResource == "01d") {
             holder.binding.weatherIconImageView.setImageResource(R.drawable.sunny)
         } else if (weatherItem.weatherIconResource == "01n") {

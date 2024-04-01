@@ -1,16 +1,16 @@
-package com.example.weatherguide
+package com.example.weatherguide.settingsScreen
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import com.example.weatherguide.R
 import com.example.weatherguide.databinding.FragmentSettingsBinding
-import java.util.Locale
+import com.example.weatherguide.utills.Util
 
 class SettingsFragment : Fragment() {
     private lateinit var binding: FragmentSettingsBinding
@@ -42,8 +42,8 @@ class SettingsFragment : Fragment() {
         }
 
         when (language) {
-            requireContext().getString(R.string.arabic) -> binding.languageRadioGroup.check(R.id.radioButtonArabic)
-            requireContext().getString(R.string.english) -> binding.languageRadioGroup.check(R.id.radioButtonEnglish)
+            "ar" -> binding.languageRadioGroup.check(R.id.radioButtonArabic)
+            "en" -> binding.languageRadioGroup.check(R.id.radioButtonEnglish)
         }
         when (notification) {
             requireContext().getString(R.string.enable) -> binding.notifyRadioGroup.check(R.id.radioButtonEnable)
@@ -62,12 +62,11 @@ class SettingsFragment : Fragment() {
             requireContext().getString(R.string.light) -> binding.themeRadioGroup.check(R.id.radioButtonLight)
             requireContext().getString(R.string.dark) -> binding.themeRadioGroup.check(R.id.radioButtonDark)
         }
-        binding.locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.locationRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioButtonMap -> {
                     sharedPreferences.edit()
                         .putString("location", requireContext().getString(R.string.map)).apply()
-
                 }
 
                 R.id.radioButtonGPS -> {
@@ -76,25 +75,32 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
-        binding.languageRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                R.id.radioButtonArabic -> {
-                    sharedPreferences.edit()
-                        .putString("language", requireContext().getString(R.string.arabic)).apply()
-                    setAppLocale("ar", "EG")
-
-                    requireActivity().recreate()
+        binding.languageRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+            val currentLanguage = sharedPreferences.getString("language", "en")
+            val newLanguage = when (checkedId) {
+                R.id.radioButtonArabic -> "ar"
+                R.id.radioButtonEnglish -> "en"
+                else -> currentLanguage
+            }
+            if (newLanguage != currentLanguage) {
+                sharedPreferences.edit().putString("language", newLanguage).apply()
+                if (newLanguage != null) {
+                    if (newLanguage == "ar") {
+                        Util.setAppLocale(newLanguage, "EG", requireActivity())
+                        requireActivity().window.decorView.layoutDirection =
+                            View.LAYOUT_DIRECTION_RTL
+                    } else {
+                        Util.setAppLocale(newLanguage, "", requireActivity())
+                        requireActivity().window.decorView.layoutDirection =
+                            View.LAYOUT_DIRECTION_LTR
+                    }
                 }
-
-                R.id.radioButtonEnglish -> {
-                    sharedPreferences.edit()
-                        .putString("language", requireContext().getString(R.string.english)).apply()
-                    setAppLocale("en", "")
-                    requireActivity().recreate()
-                }
+                requireActivity().recreate()
+            } else {
+                sharedPreferences.edit().putString("language", "en").apply()
             }
         }
-        binding.notifyRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.notifyRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioButtonEnable -> {
                     sharedPreferences.edit()
@@ -109,73 +115,65 @@ class SettingsFragment : Fragment() {
                 }
             }
         }
-        binding.windSpeedRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                R.id.radioButtonSpeedUnitMS -> {
-                    sharedPreferences.edit()
-                        .putString("windSpeed", requireContext().getString(R.string.meter_sec))
-                        .apply()
-                }
 
-                R.id.radioButtonSpeedUnitMH -> {
-                    sharedPreferences.edit()
-                        .putString("windSpeed", requireContext().getString(R.string.mile_hour))
-                        .apply()
-                }
-            }
-        }
-        binding.tempRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.tempRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             when (checkedId) {
                 R.id.radioButtonCelsius -> {
                     sharedPreferences.edit()
                         .putString("temperature", requireContext().getString(R.string.celsius))
                         .apply()
+                    sharedPreferences.edit()
+                        .putString("windSpeed", requireContext().getString(R.string.meter_sec))
+                        .apply()
+                    binding.radioButtonSpeedUnitMS.isChecked = true
+                    binding.radioButtonSpeedUnitMH.isEnabled = false
                 }
 
                 R.id.radioButtonKelvin -> {
                     sharedPreferences.edit()
                         .putString("temperature", requireContext().getString(R.string.kelvin))
                         .apply()
+                    sharedPreferences.edit()
+                        .putString("windSpeed", requireContext().getString(R.string.meter_sec))
+                        .apply()
+                    binding.radioButtonSpeedUnitMS.isChecked = true
+                    binding.radioButtonSpeedUnitMH.isEnabled = false
                 }
 
                 R.id.radioButtonFahrenheit -> {
                     sharedPreferences.edit()
                         .putString("temperature", requireContext().getString(R.string.fahrenheit))
                         .apply()
+                    sharedPreferences.edit()
+                        .putString("windSpeed", requireContext().getString(R.string.mile_hour))
+                        .apply()
+                    binding.radioButtonSpeedUnitMH.isChecked = true
+                    binding.radioButtonSpeedUnitMS.isEnabled = false
                 }
             }
-            binding.themeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-                when (checkedId) {
-                    R.id.radioButtonLight -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        requireActivity().setTheme(R.style.Base_Theme_WeatherGuide_Light)
-                        sharedPreferences.edit()
-                            .putString("theme", requireContext().getString(R.string.light))
-                            .apply()
-                        requireActivity().recreate()
-                    }
+        }
+        binding.themeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.radioButtonLight -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    sharedPreferences.edit()
+                        .putString("theme", requireContext().getString(R.string.light))
+                        .apply()
+                }
 
-                    R.id.radioButtonDark -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        requireActivity().setTheme(R.style.Base_Theme_WeatherGuide_Dark)
-                        sharedPreferences.edit()
-                            .putString("theme", requireContext().getString(R.string.dark))
-                            .apply()
-                        requireActivity().recreate()
-                    }
+                R.id.radioButtonDark -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    sharedPreferences.edit()
+                        .putString("theme", requireContext().getString(R.string.dark))
+                        .apply()
+
                 }
             }
         }
     }
 
-    private fun setAppLocale(language: String, country: String) {
-        val locale = Locale(language, country)
-        Locale.setDefault(locale)
-        val config = Configuration()
-        config.locale = locale
-        requireContext().resources.updateConfiguration(
-            config,
-            requireContext().resources.displayMetrics
-        )
-    }
+
 }
+
+
+

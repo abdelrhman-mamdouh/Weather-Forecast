@@ -1,14 +1,6 @@
 package com.example.weatherguide.model
 
-import android.content.Context
-import androidx.core.content.ContextCompat.getString
-import com.example.weatherguide.R
 import com.google.gson.annotations.SerializedName
-
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
 data class WeatherResponse(
     val lat: Double,
@@ -21,6 +13,7 @@ data class WeatherResponse(
     val daily: List<DailyWeather>,
     val alerts: List<Alert>?
 )
+
 data class Alert(
     @SerializedName("sender_name")
     val senderName: String,
@@ -30,6 +23,7 @@ data class Alert(
     val description: String,
     val tags: List<String>
 )
+
 data class CurrentWeather(
     val dt: Long,
     val sunrise: Long,
@@ -132,12 +126,13 @@ data class WeatherDescription(
 )
 
 
-
 data class WeatherHourItem(
     val time: String,
     val temperature: Int,
     val weatherIconResource: String
-)data class WeatherDaysItem(
+)
+
+data class WeatherDaysItem(
     var dayName: String,
     val weatherIconResource: String,
     val weatherDescription: String,
@@ -164,66 +159,3 @@ data class Properties(
 )
 
 
-fun getNameFromDate(unixTimestamp: Long,context: Context): String {
-    val date = Date(unixTimestamp * 1000)
-    var sharedPreferences =
-        context.getSharedPreferences("MySettings", Context.MODE_PRIVATE)
-    val language = sharedPreferences.getString("language", "")
-    if (language == "Arabic") {
-        val locale = Locale("ar", "EG")
-        val simpleDateFormat = SimpleDateFormat("EEEE", locale)
-        return simpleDateFormat.format(date)
-    } else {
-        val simpleDateFormat = SimpleDateFormat("EEEE", Locale.getDefault())
-        return simpleDateFormat.format(date)
-    }
-}
-
-
-fun createWeatherAllDaysList(context: Context,weatherDataList: List<DailyWeather>): List<WeatherDaysItem> {
-    val weatherItemList = mutableListOf<WeatherDaysItem>()
-    val encounteredDays = mutableSetOf<String>()
-
-    weatherDataList.forEach { weatherData ->
-        val dayName = getNameFromDate(weatherData.dt,context)
-        if (!encounteredDays.contains(dayName)) {
-
-            val weatherIconResource = weatherData.weather.firstOrNull()?.icon ?: ""
-            val weatherDescription = weatherData.weather.firstOrNull()?.description ?: ""
-            weatherItemList.add(
-                WeatherDaysItem(
-                    dayName,
-                    weatherIconResource,
-                    weatherDescription,
-                    weatherData.temp.day.toInt()
-                )
-            )
-            encounteredDays.add(dayName)
-        }
-    }
-    weatherItemList[0].dayName=getString(context,R.string.today)
-    weatherItemList[1].dayName=getString(context,R.string.tomorrow)
-    return weatherItemList
-}
-
-fun createCurrentDayWeatherHoursList(weatherDataList: List<HourlyWeather>): List<WeatherHourItem> {
-    val currentDate = Calendar.getInstance().time
-    val currentDateString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(currentDate)
-
-    return weatherDataList.filter { timestampToDateString(it.dt) == currentDateString }
-        .mapNotNull { weatherData ->
-            val time = timestampToTimeString(weatherData.dt)
-
-            val weatherIconResource = weatherData.weather.firstOrNull()?.icon ?: ""
-            WeatherHourItem(time, weatherData.temp.toInt(), weatherIconResource)
-        }
-}
-fun timestampToDateString(timestamp: Long): String {
-    val date = Date(timestamp * 1000)
-    return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
-}
-
-fun timestampToTimeString(timestamp: Long): String {
-    val date = Date(timestamp * 1000)
-    return SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date)
-}

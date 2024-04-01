@@ -6,14 +6,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
-class WeatherRepositoryImpl  (
+class WeatherRepositoryImpl(
     private val weatherRemoteDataSource: WeatherRemoteDataSource,
     private val weatherLocalDataSource: WeatherLocalDataSource,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WeatherRepository {
 
     companion object {
-         var repository: WeatherRepository? = null
+        var repository: WeatherRepository? = null
 
         fun getInstance(
             weatherRemoteDataSource: WeatherRemoteDataSource,
@@ -25,17 +25,18 @@ class WeatherRepositoryImpl  (
             return repository!!
         }
     }
+
     override fun getWeatherData(sharedFlowObject: SharedFlowObject): Flow<WeatherResponse> {
         return weatherRemoteDataSource.getWeatherData(sharedFlowObject)
     }
 
 
-    override  fun getLocationSuggestions(query: String): Flow<List<Suggestions>> {
+    override fun getLocationSuggestions(query: String): Flow<List<Suggestions>> {
         return weatherRemoteDataSource.getLocationsSuggestions(query)
     }
 
     override fun getAllFavoriteLocations(): Flow<List<FavoriteLocation>> {
-       return weatherLocalDataSource.getFavoriteLocations()
+        return weatherLocalDataSource.getFavoriteLocations()
     }
 
     override suspend fun delete(favoriteLocation: FavoriteLocation) {
@@ -43,7 +44,7 @@ class WeatherRepositoryImpl  (
     }
 
     override suspend fun insert(favoriteLocation: FavoriteLocation) {
-       weatherLocalDataSource.insert(favoriteLocation)
+        weatherLocalDataSource.insert(favoriteLocation)
     }
 
     override fun getAllAlarms(): Flow<List<AlarmDate>> {
@@ -55,7 +56,7 @@ class WeatherRepositoryImpl  (
     }
 
     override suspend fun removeById(alarmId: Long) {
-       weatherLocalDataSource.removeById(alarmId)
+        weatherLocalDataSource.removeById(alarmId)
     }
 
     override suspend fun add(alarmDate: AlarmDate) {

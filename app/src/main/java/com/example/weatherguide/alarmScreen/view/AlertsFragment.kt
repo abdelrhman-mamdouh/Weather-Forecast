@@ -1,33 +1,37 @@
 package com.example.weatherguide.alarmScreen.view
 
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherguide.R
 import com.example.weatherguide.alarmScreen.broadcastReceiver.AlarmReceiver
 import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModel
 import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModelFactory
-import com.example.weatherguide.databinding.FragmentAlertsBinding
 import com.example.weatherguide.data.local.WeatherLocalDataSourceImpl
-import com.example.weatherguide.favoriteScreen.OnClickListener
 import com.example.weatherguide.data.remote.ApiState
+import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.databinding.FragmentAlertsBinding
+import com.example.weatherguide.favoriteScreen.OnClickListener
 import com.example.weatherguide.model.AlarmDate
 import com.example.weatherguide.model.WeatherRepositoryImpl
-import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.utills.Constants.PERMISSION_REQUEST_CODE
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -35,10 +39,7 @@ import java.util.Calendar
 
 class AlertsFragment : Fragment(), OnClickListener<AlarmDate> {
     private lateinit var binding: FragmentAlertsBinding
-
     private val selectedDate = Calendar.getInstance()
-    private val selectedTime = Calendar.getInstance()
-
     private lateinit var adapter: AlarmAdapter
     private lateinit var alarmViewModel: AlarmViewModel
     private lateinit var alarmViewModelFactory: AlarmViewModelFactory
@@ -98,17 +99,40 @@ class AlertsFragment : Fragment(), OnClickListener<AlarmDate> {
                     if (notificationManager.areNotificationsEnabled()) {
                         showDatePickerDialog()
                     } else {
-                        ActivityCompat.requestPermissions(
-                            requireActivity(),
-                            arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                            123
-                        )
+                        if (!Settings.canDrawOverlays(requireContext())) {
+                            AlertDialog.Builder(requireContext())
+                                .setMessage(R.string.appear_on_top_permission)
+                                .setPositiveButton("Yes") { _, _ ->
+                                    val intent = Intent(
+                                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                        Uri.parse("package:${requireContext().packageName}")
+                                    )
+                                    startActivityForResult(intent, PERMISSION_REQUEST_CODE)
+                                }
+                                .setNegativeButton("No") { _, _ ->
+
+                                }
+                                .show()
+                        } else {
+                            showDatePickerDialog()
+                        }
                     }
                 } else {
                     showDatePickerDialog()
                 }
             } else {
                 showDatePickerDialog()
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(requireContext())) {
+                    showDatePickerDialog()
+                }
             }
         }
     }
@@ -219,8 +243,19 @@ class AlertsFragment : Fragment(), OnClickListener<AlarmDate> {
     }
 
     override fun onClickRemove(item: AlarmDate) {
-        alarmViewModel.removeAlarm(item)
-        cancelAlarm(item)
+        val confirmationDialog = AlertDialog.Builder(requireContext())
+            .setMessage(getString(R.string.confirm_delete_message))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                alarmViewModel.removeAlarm(item)
+                cancelAlarm(item)
+                view?.let {
+                    Snackbar.make(it, "Alarms removed successfully", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .create()
+
+        confirmationDialog.show()
     }
 
     private fun cancelAlarm(alarmDate: AlarmDate) {

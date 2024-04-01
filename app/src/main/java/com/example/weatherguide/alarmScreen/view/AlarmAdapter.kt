@@ -9,9 +9,8 @@ import com.example.weatherguide.R
 import com.example.weatherguide.databinding.AlarmItemBinding
 import com.example.weatherguide.favoriteScreen.OnClickListener
 import com.example.weatherguide.model.AlarmDate
-import com.google.android.material.snackbar.Snackbar
 
-class AlarmAdapter (
+class AlarmAdapter(
     private var alarm: List<AlarmDate>,
     private val listener: OnClickListener<AlarmDate>,
     private val context: Context
@@ -21,6 +20,7 @@ class AlarmAdapter (
 
     data class ViewHolderAlarms(val binding: AlarmItemBinding) :
         RecyclerView.ViewHolder(binding.root)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderAlarms {
         val inflater: LayoutInflater =
             parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -34,9 +34,10 @@ class AlarmAdapter (
         holder.binding.alarm = currentAlarm
         holder.binding.removeButton.setOnClickListener {
             listener.onClickRemove(currentAlarm)
-            Snackbar.make(holder.itemView,"Alarms removed successfully",Snackbar.LENGTH_SHORT).show()
+
         }
     }
+
     override fun getItemCount(): Int {
         return alarm.size
     }

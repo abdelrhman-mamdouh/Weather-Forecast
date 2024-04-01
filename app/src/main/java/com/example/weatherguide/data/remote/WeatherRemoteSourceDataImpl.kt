@@ -29,13 +29,12 @@ class WeatherRemoteSourceDataImpl private constructor() : WeatherRemoteDataSourc
     }
 
     override fun getWeatherData(sharedFlowObject: SharedFlowObject) = flow {
-        var units = "standard"
-        if (sharedFlowObject.temp == "Celsius" && sharedFlowObject.windSpeed == "Meter") {
-            units = "metric"
+        val units = when (sharedFlowObject.temp) {
+            "Celsius" -> "metric"
+            "Fahrenheit" -> "imperial"
+            else -> "standard"
         }
-        if (sharedFlowObject.temp == "Fahrenheit" && sharedFlowObject.windSpeed == "Mile") {
-            units = "imperial "
-        }
+
         try {
             val response = weatherService.getCurrentWeatherForecast(
                 sharedFlowObject.latitude,

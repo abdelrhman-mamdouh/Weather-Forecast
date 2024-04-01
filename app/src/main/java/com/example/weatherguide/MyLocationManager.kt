@@ -45,7 +45,11 @@ class MyLocationManager(private val context: Context) {
         fusedLocationProviderClient.lastLocation
             .addOnSuccessListener { location ->
                 if (location != null) {
-
+                    val sharedPreferences = context.getSharedPreferences("current-location", Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putFloat("latitudeFromMap", location.latitude.toFloat())
+                    editor.putFloat("longitudeFromMap", location.longitude.toFloat())
+                    editor.apply()
                     var myObject = Util.getSharedFlowObject(context)
                     listener.onLocationChanged(myObject)
                 }

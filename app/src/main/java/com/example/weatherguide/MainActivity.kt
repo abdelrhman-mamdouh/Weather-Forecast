@@ -1,7 +1,9 @@
 package com.example.weatherguide
 
 import android.content.Context
+import android.content.IntentFilter
 import android.content.SharedPreferences
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
@@ -10,26 +12,31 @@ import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
 import com.example.weatherguide.databinding.ActivityMainBinding
 import com.example.weatherguide.databinding.InitialSettingsDialogBinding
+import com.example.weatherguide.utills.Util
 import com.github.matteobattilana.weather.PrecipType
 
-class MainActivity : AppCompatActivity(),MainActivityListener {
+class MainActivity : AppCompatActivity(), MainActivityListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var sharedPreferences: SharedPreferences
-
+    private lateinit var networkChangeReceiver: NetworkChangeReceiver
+    private lateinit var intentFilter: IntentFilter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
         sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE)
+        networkChangeReceiver = NetworkChangeReceiver()
+        intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
 
+        registerReceiver(networkChangeReceiver, intentFilter)
         if (isFirstRun()) {
             showInitialSettingsDialog()
         } else {
+            Util.setupSettings(this)
             startActivity()
         }
     }
+
 
     private fun startActivity() {
         binding.apply {
@@ -62,6 +69,7 @@ class MainActivity : AppCompatActivity(),MainActivityListener {
             binding.myToolbar.setNavigationOnClickListener {
                 drawerLayout.openDrawer(GravityCompat.START)
             }
+
         }
     }
 
@@ -93,37 +101,48 @@ class MainActivity : AppCompatActivity(),MainActivityListener {
                 val locationSelectedId = dialogBinding.locationRadioGroup.checkedRadioButtonId
                 val radioButtonLocation =
                     dialogBinding.root.findViewById<RadioButton>(locationSelectedId)
+
                 putString("location", radioButtonLocation.text.toString())
+
                 val notificationSelectedId = dialogBinding.notifyRadioGroup.checkedRadioButtonId
                 val radioButtonNotification =
                     dialogBinding.root.findViewById<RadioButton>(notificationSelectedId)
+
                 putString("notification", radioButtonNotification.text.toString())
-                putString("language", resources.getString(R.string.english))
+
+                putString("language", "en")
+
                 putString("windSpeed", resources.getString(R.string.meter_sec))
+
                 putString("temperature", resources.getString(R.string.celsius))
+
                 putString("theme", resources.getString(R.string.light))
+
                 putBoolean("isFirstRun", true)
                 apply()
-                startActivity()
+
             }
             dialog.dismiss()
         }
-
         dialogBuilder.setCancelable(false)
         dialog.show()
-
-
     }
 
     override fun updateBackgroundAnimation(condition: String) {
         try {
+
             val precipType = PrecipType.valueOf(condition)
             binding.weatherView.setWeatherData(precipType)
+            binding.weatherView.angle = 20
+            binding.weatherView.speed = 500
+            binding.weatherView.scaleFactor = 2f
         } catch (e: IllegalArgumentException) {
 
             binding.weatherView.setWeatherData(PrecipType.CLEAR)
         }
     }
-
-
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(networkChangeReceiver)
+    }
 }

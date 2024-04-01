@@ -10,7 +10,6 @@ interface WeatherLocalDataSource {
     suspend fun delete(favoriteLocation: FavoriteLocation)
     suspend fun insert(favoriteLocation: FavoriteLocation)
 
-
     fun getAlerts(): Flow<List<AlarmDate>>
     suspend fun remove(alarmDate: AlarmDate)
     suspend fun removeById(alarmId: Long)

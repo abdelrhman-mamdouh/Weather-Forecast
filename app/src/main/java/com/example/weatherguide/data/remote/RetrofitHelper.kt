@@ -13,7 +13,8 @@ object RetrofitHelper {
         .build()
 
 
-    val WeatherService: WeatherApiService = retrofitCurrentWeather.create(WeatherApiService::class.java)
+    val WeatherService: WeatherApiService =
+        retrofitCurrentWeather.create(WeatherApiService::class.java)
 
 
     private val retrofitLocationNames = Retrofit.Builder()
@@ -21,9 +22,8 @@ object RetrofitHelper {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val locationNamesService: WeatherApiService = retrofitLocationNames.create(WeatherApiService::class.java)
-
-
+    val locationNamesService: WeatherApiService =
+        retrofitLocationNames.create(WeatherApiService::class.java)
 
 
 }

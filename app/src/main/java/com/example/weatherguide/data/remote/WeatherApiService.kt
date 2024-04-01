@@ -9,14 +9,14 @@ import retrofit2.http.Query
 
 interface WeatherApiService {
 
-        @GET("onecall")
-        suspend fun getCurrentWeatherForecast(
-            @Query("lat") latitude: Double,
-            @Query("lon") longitude: Double,
-            @Query("appid") apiKey: String,
-            @Query("lang") language: String = "en",
-            @Query("units") units: String = "metric"
-        ): Response<WeatherResponse>
+    @GET("onecall")
+    suspend fun getCurrentWeatherForecast(
+        @Query("lat") latitude: Double,
+        @Query("lon") longitude: Double,
+        @Query("appid") apiKey: String,
+        @Query("lang") language: String = "en",
+        @Query("units") units: String = "metric"
+    ): Response<WeatherResponse>
 
 
     @GET("geocode/search")

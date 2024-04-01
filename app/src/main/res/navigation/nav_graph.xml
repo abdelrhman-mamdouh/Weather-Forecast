@@ -22,7 +22,7 @@
         tools:layout="@layout/fragment_alerts" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.weatherguide.SettingsFragment"
+        android:name="com.example.weatherguide.settingsScreen.SettingsFragment"
         android:label="@string/menu_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>

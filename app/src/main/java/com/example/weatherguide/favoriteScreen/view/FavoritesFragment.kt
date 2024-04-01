@@ -1,5 +1,6 @@
 package com.example.weatherguide.favoriteScreen.view
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,16 +14,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherguide.R
-import com.example.weatherguide.databinding.FragmentFavoritesBinding
 import com.example.weatherguide.data.local.WeatherLocalDataSourceImpl
+import com.example.weatherguide.data.remote.ApiState
+import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.databinding.FragmentFavoritesBinding
 import com.example.weatherguide.favoriteScreen.OnClickListener
 import com.example.weatherguide.favoriteScreen.viewModel.FavoritesViewModel
 import com.example.weatherguide.favoriteScreen.viewModel.FavoritesViewModelFactory
-import com.example.weatherguide.data.remote.ApiState
 import com.example.weatherguide.mapScreen.view.MapActivity
 import com.example.weatherguide.model.FavoriteLocation
 import com.example.weatherguide.model.WeatherRepositoryImpl
-import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 
 
@@ -65,13 +67,13 @@ class FavoritesFragment : Fragment(), OnClickListener<FavoriteLocation> {
             favoritesViewModel.favoriteLocations.collect { state ->
                 when (state) {
                     is ApiState.Loading -> {
-                        binding.favoritesRecyclerView.visibility=View.GONE
+                        binding.favoritesRecyclerView.visibility = View.GONE
                         showLoading(true)
                     }
 
                     is ApiState.Success -> {
                         showLoading(false)
-                        binding.favoritesRecyclerView.visibility=View.VISIBLE
+                        binding.favoritesRecyclerView.visibility = View.VISIBLE
                         Log.i("TAG", "onViewCreated: ${state.data}")
                         showData(state.data)
                     }
@@ -82,7 +84,7 @@ class FavoritesFragment : Fragment(), OnClickListener<FavoriteLocation> {
                 }
             }
         }
-        binding.fabAddFavoriteLocation.setOnClickListener{
+        binding.fabAddFavoriteLocation.setOnClickListener {
             val intent = Intent(requireContext(), MapActivity::class.java)
             startActivity(intent)
         }
@@ -94,13 +96,28 @@ class FavoritesFragment : Fragment(), OnClickListener<FavoriteLocation> {
             notifyDataSetChanged()
         }
     }
+
     private fun showLoading(isLoading: Boolean) {
         binding.loader.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
 
     override fun onClickRemove(favoriteLocation: FavoriteLocation) {
-        favoritesViewModel.removeLocation(favoriteLocation)
+        val confirmationDialog = AlertDialog.Builder(requireContext())
+            .setMessage(getString(R.string.confirm_remove_message))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                favoritesViewModel.removeLocation(favoriteLocation)
+                view?.let {
+                    Snackbar.make(
+                        it,
+                        getString(R.string.location_removed_successfully), Snackbar.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .create()
+
+        confirmationDialog.show()
     }
 
     override fun onClickLocationFavorite(favoriteLocation: FavoriteLocation) {
@@ -108,11 +125,13 @@ class FavoritesFragment : Fragment(), OnClickListener<FavoriteLocation> {
         val location = spSettings.getString("location", "")
 
         if (location == requireContext().resources.getString(R.string.gps)) {
-            spSettings.edit().putString("location", requireContext().resources.getString(R.string.map)).apply()
+            spSettings.edit()
+                .putString("location", requireContext().resources.getString(R.string.map)).apply()
         }
         val lat = favoriteLocation.lat
         val long = favoriteLocation.lon
-        val sharedPreferences = requireContext().getSharedPreferences("current-location", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireContext().getSharedPreferences("current-location", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putFloat("latitudeFromMap", lat.toFloat())
         editor.putFloat("longitudeFromMap", long.toFloat())

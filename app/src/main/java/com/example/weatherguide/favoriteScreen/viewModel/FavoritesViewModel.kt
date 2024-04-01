@@ -16,17 +16,20 @@ class FavoritesViewModel(private val iRepository: WeatherRepository) : ViewModel
 
     private val _favoriteLocations: MutableStateFlow<ApiState<List<FavoriteLocation>>> =
         MutableStateFlow(ApiState.Loading)
-    val favoriteLocations: StateFlow<ApiState<List<FavoriteLocation>>> = _favoriteLocations.asStateFlow()
+    val favoriteLocations: StateFlow<ApiState<List<FavoriteLocation>>> =
+        _favoriteLocations.asStateFlow()
 
     init {
         getFavoriteLocations()
     }
+
     fun removeLocation(favoriteLocation: FavoriteLocation) {
         viewModelScope.launch(Dispatchers.IO) {
             iRepository.delete(favoriteLocation)
 
         }
     }
+
     private fun getFavoriteLocations() {
         viewModelScope.launch {
             _favoriteLocations.value = ApiState.Loading

@@ -1,8 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.WeatherGuide" parent="Theme.Material3.DayNight.NoActionBar">
-         <item name="colorPrimary">@color/primary_color</item>
+
+
+    <style name="Base.Theme.WeatherGuide" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="navigationViewStyle">@style/MyNavigationViewStyle</item>
+        <item name="colorPrimaryDark">#313950</item>
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorAccent">@color/primary_color</item>
+        <item name="android:colorBackground">#313950</item>
     </style>
 
+    <style name="Drawer" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/white</item>
+    </style>
+    <style name="actionOverflowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/primary_color</item>
+    </style>
     <style name="Theme.WeatherGuide" parent="Base.Theme.WeatherGuide" />
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="MyNavigationViewStyle" parent="Widget.MaterialComponents.NavigationView">
+
+        <item name="android:background">@color/white</item>
+    </style>
 </resources>

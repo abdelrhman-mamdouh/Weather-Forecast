@@ -21,12 +21,12 @@
     <string name="city">المدينة</string>
     <string name="visibility">الرؤية</string>
     <string name="weather_description">وصف الطقس</string>
-    <string name="hourly_weather">حالة الطقس الساعية</string>
+    <string name="hourly_weather">حالة الطقس الساعات القادمة</string>
     <string name="daily_weather">حالة الطقس اليومية</string>
     <string name="current_location">الموقع الحالي</string>
     <string name="currentDate">التاريخ الحالي</string>
     <string name="ultraviolet">الأشعة فوق البنفسجية</string>
-    <string name="hourly_forecast">التوقعات الساعية</string>
+    <string name="hourly_forecast">حالة الطقس الساعات القادمة</string>
     <string name="arabic">العربية</string>
     <string name="english">الإنجليزية</string>
     <string name="location">الموقع</string>
@@ -37,6 +37,8 @@
     <string name="fahrenheit">فهرنهايت</string>
     <string name="meter_sec">متر / ثانية</string>
     <string name="mile_hour">ميل / ساعة</string>
+    <string name="meter_Sec">م/ث</string>
+    <string name="mile_Hour">م/س</string>
     <string name="notifications">الإشعارات</string>
     <string name="enable">تمكين</string>
     <string name="disable">تعطيل</string>
@@ -86,4 +88,14 @@
     <string name="light">فاتح</string>
     <string name="today">اليوم</string>
     <string name="tomorrow">غدا</string>
+    <string name="daily_forecast">حالة الطقس اليومية</string>
+    <string name="confirm_remove_message">هل أنت متأكد أنك تريد حذف هذا الموقع؟</string>
+    <string name="confirm_delete_message">هل أنت متأكد أنك تريد حذف هذا التنبيه؟</string>
+    <string name="yes">نعم</string>
+    <string name="cancel">إلغاء</string>
+    <string name="location_removed_successfully">تم مسح الموقع بنجاح</string>
+    <string name="allow_location_permissions">تحتاج إلى السماح لأذونات الموقع للتطبيق بالحصول على بيانات الطقس.</string>
+    <string name="allow">سماح</string>
+    <string name="appear_on_top_permission">تحتاج إلى السماح بالظهور في الأعلى إذنًا للعرض على التطبيقات الأخرى</string>
+
 </resources>

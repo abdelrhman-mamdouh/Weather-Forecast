@@ -21,8 +21,8 @@ import com.example.weatherguide.R
 import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModel
 import com.example.weatherguide.alarmScreen.viewModel.AlarmViewModelFactory
 import com.example.weatherguide.data.local.WeatherLocalDataSourceImpl
-import com.example.weatherguide.model.WeatherRepositoryImpl
 import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.model.WeatherRepositoryImpl
 
 class AlertWindowService : Service() {
     private lateinit var windowManager: WindowManager
@@ -30,7 +30,7 @@ class AlertWindowService : Service() {
     private lateinit var mediaPlayer: MediaPlayer
     private var message: String = ""
     private lateinit var alarmViewModelFactory: AlarmViewModelFactory
-    private lateinit var alarmViewModel:AlarmViewModel
+    private lateinit var alarmViewModel: AlarmViewModel
     override fun onCreate() {
         super.onCreate()
 
@@ -41,7 +41,8 @@ class AlertWindowService : Service() {
             )
         )
         val viewModelStore = ViewModelStore()
-        alarmViewModel = ViewModelProvider(viewModelStore, alarmViewModelFactory).get(AlarmViewModel::class.java)
+        alarmViewModel =
+            ViewModelProvider(viewModelStore, alarmViewModelFactory).get(AlarmViewModel::class.java)
 
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         floatingView = LayoutInflater.from(this).inflate(R.layout.custom_alert, null)

@@ -15,15 +15,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherguide.R
-import com.example.weatherguide.databinding.ActivityMapBinding
 import com.example.weatherguide.data.local.WeatherLocalDataSourceImpl
+import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
+import com.example.weatherguide.databinding.ActivityMapBinding
 import com.example.weatherguide.mapScreen.ApiLocationState
 import com.example.weatherguide.mapScreen.OnItemLocationClickListener
 import com.example.weatherguide.mapScreen.viewModel.MapViewModel
 import com.example.weatherguide.mapScreen.viewModel.MapViewModelFactory
 import com.example.weatherguide.model.FavoriteLocation
 import com.example.weatherguide.model.WeatherRepositoryImpl
-import com.example.weatherguide.data.remote.WeatherRemoteSourceDataImpl
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -51,7 +51,6 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
     private lateinit var adapter: LocationSuggestionsAdapter
     private lateinit var favoritesViewModel: MapViewModel
     private lateinit var favoritesViewModelFactory: MapViewModelFactory
-    private val sharedFlowLocation = MutableSharedFlow<Pair<Double, Double>>()
     private val sharedFlow = MutableSharedFlow<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +85,7 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
                         showLoading(true)
                         binding.recyclerView.visibility = View.GONE
                     }
+
                     is ApiLocationState.Success -> {
                         binding.recyclerView.visibility = View.VISIBLE
                         showLoading(false)
@@ -93,6 +93,7 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
                         adapter.submitList(state.list)
                         Log.i("TAG", "onCreate: ${state.list}")
                     }
+
                     else -> {
                         showLoading(false)
                         binding.recyclerView.visibility = View.GONE
@@ -126,7 +127,8 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
             val marker = Marker(binding.mapView)
             marker.position = currentLocation
             binding.mapView.overlays.add(marker)
-            binding.searchEditText.hint = Editable.Factory.getInstance().newEditable("Current Location")
+            binding.searchEditText.hint =
+                Editable.Factory.getInstance().newEditable("Current Location")
             binding.mapView.controller.animateTo(currentLocation)
             binding.mapView.controller.setZoom(18.0)
         }
@@ -134,6 +136,7 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
             override fun onScroll(event: ScrollEvent?): Boolean {
                 return false
             }
+
             override fun onZoom(event: ZoomEvent?): Boolean {
                 return false
             }
@@ -188,7 +191,11 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
             editor.apply()
             val favoriteLocation = FavoriteLocation(locationName, latitude, longitude)
             favoritesViewModel.addFavoriteLocation(favoriteLocation)
-            Snackbar.make(findViewById(android.R.id.content), "Location added to favorites", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(
+                findViewById(android.R.id.content),
+                "Location added to favorites",
+                Snackbar.LENGTH_SHORT
+            ).show()
             bottomSheetDialog.dismiss()
             finish()
         }
@@ -216,7 +223,7 @@ class MapActivity : AppCompatActivity(), OnItemLocationClickListener {
         showSaveLocationDialog(currentLocation, locationName)
     }
 
-     fun getAddressLocation(latitude: Double, longitude: Double): String {
+    fun getAddressLocation(latitude: Double, longitude: Double): String {
         val geocoder = Geocoder(this).getFromLocation(latitude, longitude, 1)
         try {
             if (geocoder != null) {

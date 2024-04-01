@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import com.example.weatherguide.model.AlarmDate
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +18,7 @@ interface AlarmDAO {
 
     @Query("DELETE FROM alarm_table WHERE id = :alarmId")
     suspend fun removeById(alarmId: Long)
+
     @Query("SELECT * FROM alarm_table")
     fun getAllAlarms(): Flow<List<AlarmDate>>
 
