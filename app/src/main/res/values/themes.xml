@@ -8,6 +8,7 @@
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorAccent">@color/primary_color</item>
         <item name="android:colorBackground">#313950</item>
+        <item name="android:navigationBarColor">#313950</item>
     </style>
 
     <style name="Drawer" parent="Widget.AppCompat.DrawerArrowToggle">

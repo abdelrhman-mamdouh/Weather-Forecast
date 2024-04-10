@@ -5,6 +5,7 @@ import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.RadioButton
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -20,8 +21,10 @@ class MainActivity : AppCompatActivity(), MainActivityListener {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var networkChangeReceiver: NetworkChangeReceiver
     private lateinit var intentFilter: IntentFilter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Util.setupSettings(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         sharedPreferences = getSharedPreferences("MySettings", Context.MODE_PRIVATE)
@@ -36,7 +39,6 @@ class MainActivity : AppCompatActivity(), MainActivityListener {
             startActivity()
         }
     }
-
 
     private fun startActivity() {
         binding.apply {

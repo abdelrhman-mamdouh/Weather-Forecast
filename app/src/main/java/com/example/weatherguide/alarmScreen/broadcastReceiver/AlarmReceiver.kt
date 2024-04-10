@@ -55,10 +55,10 @@ private fun getCurrentWeatherData(homeViewModel: HomeViewModel, context: Context
             when (state) {
                 is ApiState.Success -> {
                     val serviceIntent = Intent(context, AlertWindowService::class.java)
-                    if (state.data.alerts != null) {
-                        val description: String? = state.data.alerts
-                            .mapNotNull { it.description }
-                            .firstOrNull { it.isNotEmpty() }
+                    val description: String? = state.data.alerts
+                        ?.mapNotNull { it.description }
+                        ?.firstOrNull { it != "" }
+                    if (!description.isNullOrBlank()) {
                         serviceIntent.putExtra("message", description)
                         Log.i("TAG", "getCurrentWeatherData:${description} ")
                         serviceIntent.putExtra("alarmId", alarmId)
@@ -66,15 +66,18 @@ private fun getCurrentWeatherData(homeViewModel: HomeViewModel, context: Context
                     } else {
                         serviceIntent.putExtra(
                             "message",
-                            "Weather is fine.There are no alerts or warnings."
+                            "Weather is fine. There are no alerts or warnings."
                         )
                         serviceIntent.putExtra("alarmId", alarmId)
                         context.startService(serviceIntent)
                     }
                 }
-
+                is ApiState.Failure -> {
+                    Log.e("TAG", "API call failed: ${state.error.message}", state.error)
+                  
+                }
                 else -> {
-                    Log.i("TAG", "not Success: ")
+                    Log.i("TAG", "State is neither Success nor Failure")
                 }
             }
         }

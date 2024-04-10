@@ -97,7 +97,7 @@ class Util {
             val longitude = currentLocation.getFloat("longitudeFromMap", 0.0f).toDouble()
 
             val settings = context.getSharedPreferences("MySettings", Context.MODE_PRIVATE)
-            var language = settings.getString("language", "en")
+            var language = settings.getString("language", "")
             var temperature = settings.getString("temperature", "")
 
             var windSpeedUnit = settings.getString("windSpeed", "")
@@ -123,7 +123,11 @@ class Util {
 
             return SharedFlowObject(latitude, longitude, language, temperature, windSpeedUnit)
         }
-
+         fun getCurrentDateFormatted(): String {
+            val calendar = Calendar.getInstance()
+            val dateFormat = SimpleDateFormat("EEE, dd MMM", Locale.getDefault())
+            return dateFormat.format(calendar.time)
+        }
         fun setupSettings(activity: AppCompatActivity) {
             val sharedPreferences =
                 activity.getSharedPreferences("MySettings", AppCompatActivity.MODE_PRIVATE)

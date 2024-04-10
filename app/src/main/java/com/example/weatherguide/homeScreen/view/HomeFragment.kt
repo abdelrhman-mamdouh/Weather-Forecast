@@ -2,6 +2,7 @@ package com.example.weatherguide.homeScreen.view
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.weatherguide.MainActivity
 import com.example.weatherguide.MainActivityListener
 import com.example.weatherguide.MyLocationManager
 import com.example.weatherguide.R
@@ -137,14 +139,11 @@ class HomeFragment : Fragment(), LocationListener {
                         showWeatherData(state.data)
                     }
                     else -> {
-
                         val cachedWeatherData = getCachedWeatherData()
                         if (cachedWeatherData != null) {       // Show UI with cached weather data
                             showWeatherData(cachedWeatherData)
                         } else {
-
                             showLoading(false)
-
                             Snackbar.make(
                                 binding.root,
                                 "No network connection and no cached data available",
@@ -158,11 +157,7 @@ class HomeFragment : Fragment(), LocationListener {
     }
 
 
-    private fun getCurrentDateFormatted(): String {
-        val calendar = Calendar.getInstance()
-        val dateFormat = SimpleDateFormat("EEE, dd MMM", Locale.getDefault())
-        return dateFormat.format(calendar.time)
-    }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
@@ -204,9 +199,9 @@ class HomeFragment : Fragment(), LocationListener {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun reloadFragment() {
-        val intent = activity?.intent
-        activity?.finish()
-        startActivity(intent!!)
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        startActivity(intent)
+        requireActivity().finish()
         binding.swipeRefreshLayout.isRefreshing = false
     }
 
@@ -278,7 +273,7 @@ class HomeFragment : Fragment(), LocationListener {
         } else {
             mListener.updateBackgroundAnimation("CLEAR")
         }
-        binding.dateTextView.text = getCurrentDateFormatted()
+        binding.dateTextView.text = Util.getCurrentDateFormatted()
     }
 }
 
